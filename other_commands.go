@@ -55,3 +55,21 @@ func pong(s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, "Pong")
 }
 
+
+func help(s *discordgo.Session, m *discordgo.MessageCreate) {
+	helpMessage := "Commands:\n" +
+		"!ping - Responds with Pong\n" +
+		"!pong - Responds with Ping\n" +
+		"!play <url> - Plays a song from the given URL\n" +
+		"!search <query> - Searches for a song and plays it\n" +
+		"!skip - Skips the current song\n" +
+		"!queue - Shows the current queue\n" +
+		"!stop - Stops playback and clears the queue\n" +
+		"!pause - Pauses playback\n" +
+		"!resume - Resumes playback\n" +
+		"!volume <value> - Sets the volume (0.0 to 2.0)\n" +
+		"!currentvolume - Shows the current volume\n" +
+		"!help - Shows this help message\n" +
+		"!nuke <number> - Deletes the specified number of messages"
+	s.ChannelMessageSend(m.ChannelID, helpMessage)
+}

@@ -136,3 +136,11 @@ func stopSong(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Notify the user
 	s.ChannelMessageSend(m.ChannelID, "Stopped playback and cleared the queue.")
 }
+
+func currentVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
+	volumeMutex.Lock()
+	defer volumeMutex.Unlock()
+
+	currentVolume := volume[m.GuildID]
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Current volume: %.2f", currentVolume))
+}

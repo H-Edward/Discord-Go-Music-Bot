@@ -136,11 +136,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		pauseSong(s, m)
 	case "!volume":
 		setVolume(s, m)
+	case "!currentvolume":
+		currentVolume(s, m)
 	case "!nuke": // delete n messages
 		nukeMessages(s, m)
 	case "!help":
-		s.ChannelMessageSend(m.ChannelID, "Commands: !ping, !pong, !play <url>, !search <query>, !skip, !queue, !stop, !pause, !resume, !volume <value>, !help, !nuke <number>")
-
+		help(s, m)
 	default:
 		return // ignore other messages
 	}
