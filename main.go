@@ -163,7 +163,7 @@ func addSong(s *discordgo.Session, m *discordgo.MessageCreate, mode bool) { // m
 		err := cmd.Run()
 		if err != nil {
 			log.Println(ANSIRed + "Error: " + err.Error() + ANSIReset)
-			s.ChannelMessageSend(m.ChannelID, "Error searching: "+err.Error())
+			s.ChannelMessageSend(m.ChannelID, "Error while searching")
 			return
 		}
 
