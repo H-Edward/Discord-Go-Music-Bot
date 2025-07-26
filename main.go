@@ -45,7 +45,7 @@ var (
 	playingMutex sync.Mutex
 	paused       = make(map[string]bool) // Guild ID -> Pause state
 	pauseMutex   sync.Mutex
-	volume       float64                 = 1.0
+	volume       = make(map[string]float64) // Guild ID -> Volume
 	volumeMutex  sync.Mutex
 	opusEncoder  *gopus.Encoder
 	stopChannels = make(map[string]chan bool)
@@ -76,16 +76,14 @@ func main() {
 	setup()
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
-		log.Println(ANSIRed + "Error creating Discord session: " + err.Error() + ANSIReset)
-		return
+		log.Fatal(ANSIRed + "Error creating Discord session: " + err.Error() + ANSIReset)
 	}
 
 	dg.AddHandler(messageCreate)
 
 	err = dg.Open()
 	if err != nil {
-		log.Println(ANSIRed + "Error opening connection: " + err.Error() + ANSIReset)
-		return
+		log.Fatal(ANSIRed + "Error opening connection: " + err.Error() + ANSIReset)
 	}
 	defer dg.Close()
 
@@ -343,14 +341,13 @@ func joinUserVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) (*di
 }
 
 // OnError gets called by dgvoice when an error is encountered.
-// By default logs to STDERR
 var OnError = func(str string, err error) {
-	prefix := log.Prefix() + ANSIRed + "dgVoice: " + str
+	prefix := ANSIRed + "dgVoice: " + str
 
 	if err != nil {
-		os.Stderr.WriteString(prefix + ": " + err.Error() + ANSIReset + "\n")
+		log.Println(prefix + ": " + err.Error() + ANSIReset + "\n")
 	} else {
-		os.Stderr.WriteString(prefix + ANSIReset + "\n")
+		log.Println(prefix + ": Error is nil" + ANSIReset + "\n")
 	}
 }
 
@@ -563,8 +560,14 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 		dataReceived = true
 
 		// Apply volume adjustment
+		// Use v.GuildID for per-guild volume
 		volumeMutex.Lock()
-		currentVolume := volume
+		currentVolume := 1.0
+		if v != nil && v.GuildID != "" {
+			if vol, ok := volume[v.GuildID]; ok {
+				currentVolume = vol
+			}
+		}
 		volumeMutex.Unlock()
 
 		for i := range audiobuf {

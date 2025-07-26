@@ -66,7 +66,7 @@ func setVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	volumeMutex.Lock()
-	volume = newVolume
+	volume[m.GuildID] = newVolume
 	volumeMutex.Unlock()
 
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Volume set to %.2f", newVolume))
