@@ -563,11 +563,10 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 		// Apply volume adjustment
 		// Use v.GuildID for per-guild volume
 		volumeMutex.Lock()
-		currentVolume := 1.0
-		if v != nil && v.GuildID != "" {
-			if vol, ok := volume[v.GuildID]; ok {
-				currentVolume = vol
-			}
+		currentVolume, ok := volume[v.GuildID]
+		if !ok {
+			currentVolume = 1.0
+			volume[v.GuildID] = 1.0
 		}
 		volumeMutex.Unlock()
 

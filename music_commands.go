@@ -66,6 +66,9 @@ func setVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	volumeMutex.Lock()
+	if _, ok := volume[m.GuildID]; !ok {
+		volume[m.GuildID] = 1.0 // Initialize to default if not set
+	}
 	volume[m.GuildID] = newVolume
 	volumeMutex.Unlock()
 
@@ -141,6 +144,10 @@ func currentVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
 	volumeMutex.Lock()
 	defer volumeMutex.Unlock()
 
-	currentVolume := volume[m.GuildID]
+	currentVolume, ok := volume[m.GuildID]
+	if !ok {
+		currentVolume = 1.0 // Default volume if not set
+		volume[m.GuildID] = 1.0
+	}
 	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Current volume: %.2f", currentVolume))
 }
