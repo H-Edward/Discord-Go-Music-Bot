@@ -207,4 +207,4 @@ This will return a message with all the commands and their usage.
 
 ## License
 
-MIT
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0). You can find the full license text in the `LICENSE` file in the root of the repository.
