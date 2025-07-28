@@ -153,8 +153,8 @@ func addSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool)
 			s.ChannelMessageSend(m.ChannelID, "Invalid search query")
 			return
 		}
-
-		url, found_result := searchYoutube(searchQuery)
+		var found_result bool
+		url, found_result = searchYoutube(searchQuery)
 
 		if !found_result {
 			log.Println(ANSIRed + "No results found for: " + searchQuery + ANSIReset)
@@ -355,7 +355,6 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 		// read pcm from chan, exit if channel is closed.
 		recv, ok := <-pcm
 		if !ok {
-			OnError("PCM Channel closed", nil)
 			return
 		}
 
@@ -381,7 +380,7 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh <-chan bool) {
 
 	if !isValidURL(url) {
-		OnError("Invalid URL", nil)
+		OnError("Invalid URL"+ url, nil)
 		return
 	}
 
