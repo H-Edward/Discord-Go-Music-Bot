@@ -11,7 +11,7 @@ RUN apt-get update && \
     chmod a+rx /usr/local/bin/yt-dlp && \
     rm -rf /var/lib/apt/lists/*
 
-COPY .env go.mod go.sum Makefile  main.go music_commands.go other_commands.go validation.go ./
+COPY .env go.mod go.sum Makefile main.go music_commands.go other_commands.go validation.go ./
 
 RUN go mod download
 
