@@ -14,6 +14,7 @@ There is a small amount of configuration needed to get it up and running, and on
     - [Native](#native)
     - [Docker](#docker)
   - [Usage within Discord](#usage-within-discord)
+  - [Contributing](#contributing)
   - [License](#license)
 
 ## Features
@@ -216,6 +217,14 @@ All the other commands can be seen by messaging:
 ```
 
 This will return a message with all the commands and their usage.
+
+## Contributing
+
+If you would like to contribute there are many ways you can help:
+
+- **Report bugs**: If you find any bugs or issues, please report them on the [GitHub Issues page](https://github.com/H-Edward/Discord-Go-Music-Bot/issues)
+- **Suggest features**: If you have any ideas for new features or improvements, please let me know on the [GitHub Issues page](https://github.com/H-Edward/Discord-Go-Music-Bot/issues)
+- **Contribute code**: If you would like to contribute code, please fork the repository and submit a pull request and I will review it ASAP.
 
 ## License
 
