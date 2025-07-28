@@ -102,6 +102,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.Bot { // ignore bot messages
 		return
 	}
+	if !strings.HasPrefix(m.Content, "!") { // ignore messages that do not start with '!'
+		return
+	}
+
 	switch strings.Fields(m.Content)[0] {
 	case "!ping":
 		pong(s, m)
