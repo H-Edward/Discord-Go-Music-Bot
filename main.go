@@ -31,6 +31,7 @@ const (
 	minClampValue float64 = -32768 // min volume
 
 	// ANSI color codes for terminal output
+	ANSIBold   = "\033[1m"
 	ANSIBlue   = "\033[34m"
 	ANSIYellow = "\033[33m"
 	ANSIRed    = "\033[31m"
@@ -52,9 +53,12 @@ var (
 	stopMutex    sync.Mutex
 	pauseChs     = make(map[string]chan bool) // Map of guild ID to pause channels
 	pauseChMutex sync.Mutex
+
+	GoSourceHash string // short hash of all go source files
 )
 
 func setup() { // find env, get bot token
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(ANSIRed + "Error loading .env file" + ANSIReset)
 	}
@@ -86,7 +90,7 @@ func main() {
 		log.Fatal(ANSIRed + "Error opening connection: " + err.Error() + ANSIReset)
 	}
 	defer dg.Close()
-
+	log.Println("Version: " + ANSIBold + GoSourceHash + ANSIReset)
 	log.Println(ANSIBlue + "Bot is running. Press CTRL-C to exit." + ANSIReset)
 	select {} // block forever
 }
@@ -140,6 +144,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		currentVolume(s, m)
 	case "!nuke": // delete n messages
 		nukeMessages(s, m)
+	case "!version":
+		version(s, m)
 	case "!help":
 		help(s, m)
 	default:

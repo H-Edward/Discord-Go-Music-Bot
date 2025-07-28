@@ -3,6 +3,8 @@ package main
 import (
 	"regexp"
 	"strings"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 func isValidSearchQuery(query string) bool {
@@ -43,4 +45,42 @@ func isValidURL(input string) bool {
 		}
 	}
 	return false
+}
+
+func hasPermission(s *discordgo.Session, m *discordgo.MessageCreate, permission_requested int64) bool {
+	// This function checks the messages author's permissions in the guild for a specific permission
+
+	member, err := s.GuildMember(m.GuildID, m.Author.ID)
+	if err != nil {
+		return false
+	}
+	for _, role := range member.Roles {
+		roleData, err := s.State.Role(m.GuildID, role)
+		if err != nil {
+			continue
+		}
+		if roleData.Permissions&permission_requested == permission_requested {
+			return true
+		}
+		if roleData.Permissions&discordgo.PermissionAdministrator == discordgo.PermissionAdministrator {
+			// If the user has the Administrator permission, they have all permissions
+			return true
+		}
+	}
+
+	guild, err := s.State.Guild(m.GuildID)
+	if err != nil {
+		return false
+	}
+
+	if guild.OwnerID == m.Author.ID {
+		return true
+	}
+
+	// If no roles matched, check the member's permissions directly
+	if member.Permissions&permission_requested == permission_requested {
+		return true
+	}
+	return false
+
 }

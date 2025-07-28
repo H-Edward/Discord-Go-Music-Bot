@@ -2,11 +2,13 @@ BINARY_NAME=music-bot
 
 # Choose the Go compiler
 GOBUILD=go build
+GO_SOURCE_HASH:=$(shell cat *.go | sha1sum | cut -c1-8)
 
 all: build
 
 build: 
-	$(GOBUILD) -o $(BINARY_NAME) -v
+	$(GOBUILD) -ldflags "-X 'main.GoSourceHash=$(GO_SOURCE_HASH)'" -o $(BINARY_NAME) -v
+
 clean: 
 	go clean
 	rm -f $(BINARY_NAME)
