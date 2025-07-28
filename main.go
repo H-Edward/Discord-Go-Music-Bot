@@ -112,28 +112,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "!pong":
 		ping(s, m)
 	case "!play":
-		// make sure its length is suitable
-		if len(m.Content) < 6 {
-			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
-			return
-		}
-
-		if !(isValidURL(m.Content[6:]) || m.Content[6:] == "") {
-
-			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
-			return
-		}
 		addSong(s, m, false) // false as in not a search
 	case "!search":
-		// search for a song on youtube
-		// add the first result to the queue
-		if len(m.Content) < 7 {
-			s.ChannelMessageSend(m.ChannelID, "Invalid search")
-			return
-		}
-
-		addSong(s, m, true)
-
+		addSong(s, m, true) // true as in search for a song
 	case "!skip":
 		skipSong(s, m)
 	case "!queue":
@@ -160,6 +141,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 func addSong(s *discordgo.Session, m *discordgo.MessageCreate, mode bool) { // mode (false for play, true for search)
 
 	if mode {
+		if len(m.Content) < 7 {
+			s.ChannelMessageSend(m.ChannelID, "Invalid search query")
+			return
+		}
+
 		searchQuery := strings.TrimSpace(m.Content[8:])
 
 		if !isValidSearchQuery(searchQuery) {
@@ -200,10 +186,20 @@ func addSong(s *discordgo.Session, m *discordgo.MessageCreate, mode bool) { // m
 
 		queue[m.GuildID] = append(queue[m.GuildID], url)
 	} else {
+		if len(m.Content) < 6 {
+			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
+			return
+		}
+
+		if !(isValidURL(m.Content[6:]) || m.Content[6:] == "") {
+
+			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
+			return
+		}
 		playURL := strings.TrimSpace(m.Content[6:])
 
 		if !isValidURL(playURL) {
-			s.ChannelMessageSend(m.ChannelID, "Invalid or disallowed URL")
+			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
 			return
 		}
 		queueMutex.Lock()
