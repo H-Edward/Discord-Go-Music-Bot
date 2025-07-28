@@ -20,6 +20,7 @@ import (
 )
 
 const (
+	// magic numbers
 	channels  int = 2                   // 1 for mono, 2 for stereo
 	frameRate int = 48000               // audio sampling rate
 	frameSize int = 960                 // uint16 size of each audio frame
@@ -54,10 +55,10 @@ var (
 	pauseChs     = make(map[string]chan bool) // Map of guild ID to pause channels
 	pauseChMutex sync.Mutex
 
-	GoSourceHash string // short hash of all go source files
+	GoSourceHash string // short hash of all go source files for !version
 )
 
-func setup() { // find env, get bot token
+func setup() { // find env, get bot token, check dependencies
 
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(ANSIRed + "Error loading .env file" + ANSIReset)
@@ -138,9 +139,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
-func addSong(s *discordgo.Session, m *discordgo.MessageCreate, mode bool) { // mode (false for play, true for search)
-
-	if mode {
+func addSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool) { // mode (false for play, true for search)
+	var url string
+	if search_mode {
 		if len(m.Content) < 7 {
 			s.ChannelMessageSend(m.ChannelID, "Invalid search query")
 			return
@@ -153,61 +154,36 @@ func addSong(s *discordgo.Session, m *discordgo.MessageCreate, mode bool) { // m
 			return
 		}
 
-		cmd := exec.Command("yt-dlp", "--flat-playlist", "--get-url", "ytsearch1:"+searchQuery)
-		var outputFromSearch bytes.Buffer
-		cmd.Stdout = &outputFromSearch
-		err := cmd.Run()
-		if err != nil {
-			log.Println(ANSIRed + "Error: " + err.Error() + ANSIReset)
-			s.ChannelMessageSend(m.ChannelID, "Error while searching")
+		url, found_result := searchYoutube(searchQuery)
+
+		if !found_result {
+			log.Println(ANSIRed + "No results found for: " + searchQuery + ANSIReset)
+			s.ChannelMessageSend(m.ChannelID, "No results found for: "+searchQuery)
 			return
-		}
-
-		// Clean up the output - take only the first line
-		url := strings.TrimSpace(outputFromSearch.String())
-		if idx := strings.Index(url, "\n"); idx > 0 {
-			url = url[:idx]
-		}
-
-		if url == "" {
-			s.ChannelMessageSend(m.ChannelID, "No results found")
-			return
-		}
-
-		// sanity check with validating the url
-
-		if !isValidURL(url) {
-			s.ChannelMessageSend(m.ChannelID, "Error with found URL")
 		}
 
 		s.ChannelMessageSend(m.ChannelID, "Found: "+url)
-
-		queueMutex.Lock()
-
-		queue[m.GuildID] = append(queue[m.GuildID], url)
 	} else {
 		if len(m.Content) < 6 {
 			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
 			return
 		}
 
-		if !(isValidURL(m.Content[6:]) || m.Content[6:] == "") {
+		url = strings.TrimSpace(m.Content[6:])
 
+		if !isValidURL(url) {
 			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
 			return
 		}
-		playURL := strings.TrimSpace(m.Content[6:])
 
-		if !isValidURL(playURL) {
-			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
-			return
-		}
-		queueMutex.Lock()
-
-		queue[m.GuildID] = append(queue[m.GuildID], m.Content[6:])
 	}
-	isAlreadyPlaying := playing[m.GuildID]
+	queueMutex.Lock()
+	queue[m.GuildID] = append(queue[m.GuildID], url)
 	queueMutex.Unlock()
+
+	playingMutex.Lock()
+	isAlreadyPlaying := playing[m.GuildID]
+	playingMutex.Unlock()
 
 	s.ChannelMessageSend(m.ChannelID, "Added to queue.")
 
@@ -594,4 +570,34 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 			return
 		}
 	}
+}
+
+func searchYoutube(query string) (string, bool) {
+	cmd := exec.Command("yt-dlp", "--flat-playlist", "--get-url", "ytsearch1:"+query)
+	var outputFromSearch bytes.Buffer
+	cmd.Stdout = &outputFromSearch
+	err := cmd.Run()
+	if err != nil {
+		log.Println(ANSIRed + "Error: " + err.Error() + ANSIReset)
+		return "", false
+	}
+
+	// Clean up the output - take only the first line
+	url := strings.TrimSpace(outputFromSearch.String())
+	if idx := strings.Index(url, "\n"); idx > 0 {
+		url = url[:idx]
+	}
+
+	if url == "" {
+		return "", false
+	}
+
+	// sanity check with validating the url
+
+	if !isValidURL(url) {
+		return "", false
+	}
+
+	return url, true
+
 }
