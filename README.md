@@ -4,6 +4,18 @@ This project is a simple-to-use Discord bot you can deploy almost anywhere to pl
 
 There is a small amount of configuration needed to get it up and running, and once set up, there is little maintenance required to keep it operational.
 
+## Table of Contents
+
+- [Discord-Go-Music-Bot](#discord-go-music-bot)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Installation](#installation)
+    - [Native vs Docker](#native-vs-docker)
+    - [Native](#native)
+    - [Docker](#docker)
+  - [Usage within Discord](#usage-within-discord)
+  - [License](#license)
+
 ## Features
 
 The bot supports the following features:
