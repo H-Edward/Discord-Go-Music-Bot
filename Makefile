@@ -47,7 +47,7 @@ docker-rmi:
 docker-kill:
 	docker kill $(BINARY_NAME)
 
-
-
 docker-network-rm:
 	docker network rm musicbot-net || echo "Network does not exist"
+
+docker-refresh-build: docker-stop docker-rm docker-build docker-run
