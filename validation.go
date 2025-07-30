@@ -7,6 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+// Checks if a search query is safe and valid
 func isValidSearchQuery(query string) bool {
 	var safeSearch = regexp.MustCompile(`^[a-zA-Z0-9\s]+$`)
 
@@ -20,6 +21,7 @@ func isValidSearchQuery(query string) bool {
 	return true
 }
 
+// Makes sure a URL entered is a valid YouTube URL
 func isValidURL(input string) bool {
 	input = strings.TrimSpace(input)
 
@@ -47,6 +49,7 @@ func isValidURL(input string) bool {
 	return false
 }
 
+// Given a permission, checks if the user has that permission in the guild
 func hasPermission(s *discordgo.Session, m *discordgo.MessageCreate, permission_requested int64) bool {
 	// This function checks the messages author's permissions in the guild for a specific permission
 
