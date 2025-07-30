@@ -19,6 +19,9 @@ run: build
 test: 
 	go test -v ./...
 
+get-version:
+	@echo "Version: $(GO_SOURCE_HASH)"
+
 docker-build:
 	docker build -t $(BINARY_NAME) .
 
