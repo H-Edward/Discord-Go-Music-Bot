@@ -51,7 +51,6 @@ func isValidURL(input string) bool {
 
 // Given a permission, checks if the user has that permission in the guild
 func hasPermission(s *discordgo.Session, m *discordgo.MessageCreate, permission_requested int64) bool {
-	// This function checks the messages author's permissions in the guild for a specific permission
 
 	member, err := s.GuildMember(m.GuildID, m.Author.ID)
 	if err != nil {
