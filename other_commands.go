@@ -4,6 +4,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -46,6 +47,53 @@ func pong(s *discordgo.Session, m *discordgo.MessageCreate) {
 	s.ChannelMessageSend(m.ChannelID, "Pong")
 }
 
+func uptime(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if !hasPermission(s, m, discordgo.PermissionAdministrator) {
+		s.ChannelMessageSend(m.ChannelID, "You do not have permission to use this command.")
+		return
+	}
+	timeNow := time.Now()
+	uptime := timeNow.Sub(startTime)
+	// convert to days, hours, minutes, seconds
+	days := int(uptime.Hours() / 24)
+	hours := int(uptime.Hours()) % 24
+	minutes := int(uptime.Minutes()) % 60
+	seconds := int(uptime.Seconds()) % 60
+
+	var uptimeMessage strings.Builder
+	if days > 0 {
+		if days == 1 {
+			uptimeMessage.WriteString("1 day, ")
+		} else {
+			uptimeMessage.WriteString(strconv.Itoa(days) + " days, ")
+		}
+	}
+	if hours > 0 {
+		if hours == 1 {
+			uptimeMessage.WriteString("1 hour, ")
+		} else {
+			uptimeMessage.WriteString(strconv.Itoa(hours) + " hours, ")
+		}
+	}
+	if minutes > 0 {
+		if minutes == 1 {
+			uptimeMessage.WriteString("1 minute and ")
+		} else {
+
+			uptimeMessage.WriteString(strconv.Itoa(minutes) + " minutes and ")
+		}
+	}
+	if seconds > 0 {
+		if seconds == 1 {
+			uptimeMessage.WriteString("1 second")
+		} else {
+			uptimeMessage.WriteString(strconv.Itoa(seconds) + " seconds")
+		}
+	}
+
+	s.ChannelMessageSend(m.ChannelID, "Uptime: "+uptimeMessage.String())
+}
+
 func help(s *discordgo.Session, m *discordgo.MessageCreate) {
 	helpMessage := "Commands:\n" +
 		"!ping - Responds with Pong\n" +
@@ -60,6 +108,7 @@ func help(s *discordgo.Session, m *discordgo.MessageCreate) {
 		"!volume <value> - Sets the volume (0 to 200)\n" +
 		"!currentvolume - Shows the current volume\n" +
 		"!nuke <number> - Deletes the specified number of messages\n" +
+		"!uptime - Shows how long the bot has been running\n" +
 		"!version - Shows a hash-based version of the bot\n" +
 		"!help - Shows this help message\n"
 	s.ChannelMessageSend(m.ChannelID, helpMessage)

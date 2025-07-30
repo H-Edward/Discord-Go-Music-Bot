@@ -55,6 +55,8 @@ var (
 	pauseChs     = make(map[string]chan bool) // Map of guild ID to pause channels
 	pauseChMutex sync.Mutex
 
+	startTime = time.Now() // Track bot start time for uptime
+
 	GoSourceHash string // short hash of all go source files for !version
 )
 
@@ -130,6 +132,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		currentVolume(s, m)
 	case "!nuke": // delete n messages
 		nukeMessages(s, m)
+	case "!uptime":
+		uptime(s, m)
 	case "!version":
 		version(s, m)
 	case "!help":
@@ -380,7 +384,7 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh <-chan bool) {
 
 	if !isValidURL(url) {
-		OnError("Invalid URL"+ url, nil)
+		OnError("Invalid URL"+url, nil)
 		return
 	}
 
