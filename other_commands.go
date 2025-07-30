@@ -124,18 +124,17 @@ func version(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 func unknown(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Check .env for how to handle unknown commands
-	os.Getenv("UNKNOWN_COMMANDS")
-	if os.Getenv("UNKNOWN_COMMANDS") == "ignore" {
+	unknown_commands := os.Getenv("UNKNOWN_COMMANDS")
+	if unknown_commands== "ignore" {
 		return
 	}
-	if os.Getenv("UNKNOWN_COMMANDS") == "help" {
+	if unknown_commands== "help" {
 		help(s, m)
 		return
 	}
-	if os.Getenv("UNKNOWN_COMMANDS") == "error" {
+	if unknown_commands== "error" {
 		s.ChannelMessageSend(m.ChannelID, "Unknown command. Type !help for a list of commands.")
 		return
 	}
-	// if there is no UNKNOWN_COMMANDS in .env, treat as "ignore"
-	return
+	// default case is "ignore"
 }
