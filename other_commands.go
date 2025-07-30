@@ -136,6 +136,6 @@ func unknown(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Unknown command. Type !help for a list of commands.")
 		return
 	}
-	// if there is no UNKNOWNCOMMANDS in .env, treat as "ignore"
+	// if there is no UNKNOWN_COMMANDS in .env, treat as "ignore"
 	return
 }
