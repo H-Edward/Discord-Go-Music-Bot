@@ -19,7 +19,7 @@ run: build
 test: 
 	go test -v ./...
 
-get-version:
+version:
 	@echo "Version: $(GO_SOURCE_HASH)"
 
 docker-build:
