@@ -17,7 +17,15 @@ func showQueue(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Queue is empty.")
 		return
 	}
-	s.ChannelMessageSend(m.ChannelID, "Queue: "+strings.Join(queue[m.GuildID], ", "))
+	// Make a formatted list of songs, "[N] URL""
+	queueMutex.Lock()
+	var formattedQueue []string
+	for i, song := range queue[m.GuildID] {
+		formattedQueue = append(formattedQueue, fmt.Sprintf("[%d] %s", i+1, song))
+	}
+	queueMutex.Unlock()
+
+	s.ChannelMessageSend(m.ChannelID, "Current queue:\n"+strings.Join(formattedQueue, "\n"))
 }
 
 func pauseSong(s *discordgo.Session, m *discordgo.MessageCreate) {
