@@ -56,7 +56,7 @@ func help(s *discordgo.Session, m *discordgo.MessageCreate) {
 		"!stop - Stops playback and clears the queue\n" +
 		"!pause - Pauses playback\n" +
 		"!resume - Resumes playback\n" +
-		"!volume <value> - Sets the volume (0.0 to 2.0)\n" +
+		"!volume <value> - Sets the volume (0 to 200)\n" +
 		"!currentvolume - Shows the current volume\n" +
 		"!nuke <number> - Deletes the specified number of messages\n" +
 		"!version - Shows a hash-based version of the bot\n" +

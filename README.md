@@ -193,11 +193,11 @@ Search for a video and add it to the queue
 
 !resume
 
-!volume 0.5
+!volume 50
 
-!volume 2
+!volume 200
 
-!volume 1
+!volume 100
 
 !skip
 
