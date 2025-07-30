@@ -12,7 +12,9 @@ There is a small amount of configuration needed to get it up and running, and on
   - [Installation](#installation)
     - [Native vs Docker](#native-vs-docker)
     - [Native](#native)
+      - [Updating with Native](#updating-with-native)
     - [Docker](#docker)
+      - [Updating with Docker](#updating-with-docker)
   - [Environment Variables](#environment-variables)
   - [Usage within Discord](#usage-within-discord)
   - [Contributing](#contributing)
@@ -121,12 +123,19 @@ You now have the bot ready and can run it using the following command:
 
 To kill the bot safely, you can press `Ctrl+C` in the terminal where the bot is running.
 
-*Updating the bot can be achieved by running:*
+#### Updating with Native
+
+If you want to update the bot to the latest version, you can do so by running the following commands:
 
 ```bash
-git pull
+git pull origin main
 make
-# then run the bot again, killing the old one if it is still running
+```
+
+Then you may run the bot again with:
+
+```bash
+./music-bot
 ```
 
 
@@ -142,10 +151,12 @@ cd Discord-Go-Music-Bot
 ```
 
 Now you must make sure you have your bot token from Discord's developer portal,
-which can be found at https://discord.com/developers/applications. Then click on your application, then click on `Bot` in the sidebar, then copy the token from this page (you may need to click `Reset Token`).
+which can be found at https://discord.com/developers/applications.
+
+Then click on your application, then click on `Bot` in the sidebar, then copy the token from this page (you may need to click `Reset Token`).
 
 ```bash
-mv .env.sample .env 
+cp .env.sample .env 
 nano .env
 ```
 
@@ -171,6 +182,30 @@ make docker-run
 
 _If you would like to use Docker but are unfamiliar, the `Makefile` has some additional commands to help manage the bot._
 
+#### Updating with Docker
+
+If you want to update the bot to the latest version, you can do so by running the following commands:
+
+```bash
+make docker-stop
+make docker-rm 
+git pull origin main
+make docker-build
+```
+
+Then you may run the bot again with:
+
+```bash
+make docker-run
+```
+
+Alternatively,
+
+```bash
+git pull origin main
+make docker-refresh-build
+```
+
 ## Environment Variables
 
 **You can set the following environment variables in the `.env` file to configure the bot:**
@@ -186,7 +221,6 @@ Ignore - If set to `ignore`, the bot will treat the command as if its just anoth
 Error - If set to `error`, the bot will respond with an error message if an unknown command is used
 
 Help - If set to `help`, the bot will respond with a help message if an unknown command is used (same as `!help` command)
-
 
 ## Usage within Discord
 
