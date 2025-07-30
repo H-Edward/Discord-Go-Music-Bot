@@ -135,7 +135,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	case "!help":
 		help(s, m)
 	default:
-		return // ignore other messages
+		unknown(s, m)
 	}
 }
 

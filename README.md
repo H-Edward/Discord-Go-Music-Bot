@@ -13,6 +13,7 @@ There is a small amount of configuration needed to get it up and running, and on
     - [Native vs Docker](#native-vs-docker)
     - [Native](#native)
     - [Docker](#docker)
+  - [Environment Variables](#environment-variables)
   - [Usage within Discord](#usage-within-discord)
   - [Contributing](#contributing)
   - [License](#license)
@@ -169,6 +170,23 @@ make docker-run
 ```
 
 _If you would like to use Docker but are unfamiliar, the `Makefile` has some additional commands to help manage the bot._
+
+## Environment Variables
+
+**You can set the following environment variables in the `.env` file to configure the bot:**
+
+DISCORD_BOT_TOKEN
+
+Your Discord bot token (required)
+
+UNKNOWN_COMMANDS
+
+Ignore - If set to `ignore`, the bot will treat the command as if its just another message
+
+Error - If set to `error`, the bot will respond with an error message if an unknown command is used
+
+Help - If set to `help`, the bot will respond with a help message if an unknown command is used (same as `!help` command)
+
 
 ## Usage within Discord
 

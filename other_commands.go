@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"strconv"
 	"strings"
 
@@ -70,4 +71,22 @@ func version(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 	s.ChannelMessageSend(m.ChannelID, "Version: "+GoSourceHash)
+}
+
+func unknown(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Check .env for how to handle unknown commands
+	os.Getenv("UNKNOWN_COMMANDS")
+	if os.Getenv("UNKNOWN_COMMANDS") == "ignore" {
+		return
+	}
+	if os.Getenv("UNKNOWN_COMMANDS") == "help" {
+		help(s, m)
+		return
+	}
+	if os.Getenv("UNKNOWN_COMMANDS") == "error" {
+		s.ChannelMessageSend(m.ChannelID, "Unknown command. Type !help for a list of commands.")
+		return
+	}
+	// if there is no UNKNOWNCOMMANDS in .env, treat as "ignore"
+	return
 }
