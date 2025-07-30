@@ -37,9 +37,15 @@ The bot supports the following features:
 
 - Nuking messages (if the user has message management permissions)
 
+- Getting the bot's uptime
+
+- Getting the bot's version
+
 - Pinging the bot to make sure it's active
 
 - Getting a help message
+
+
 
 _more features to come as they are requested or I feel like adding them_
 
