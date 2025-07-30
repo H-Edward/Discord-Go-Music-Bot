@@ -104,7 +104,7 @@ func skipSong(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	vc.Speaking(false)
 
-	s.ChannelMessageSend(m.ChannelID, "Skipping current song...")
+	s.ChannelMessageSend(m.ChannelID, "Skipping current song")
 
 	// The song will stop, and the queue processor will automatically move to the next song
 	// We don't need to start a new queue processor
@@ -161,5 +161,7 @@ func currentVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
 		currentVolume = 1.0 // Default volume if not set
 		volume[m.GuildID] = 1.0
 	}
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Current volume: %.2f", currentVolume))
+	// Convert to percentage for display
+	currentVolume = currentVolume * 100.0 // Convert factor back to percentage
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Current volume is %.2f%%", currentVolume))
 }
