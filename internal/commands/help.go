@@ -18,6 +18,7 @@ func Help(s *discordgo.Session, m *discordgo.MessageCreate) {
 		"!nuke <number> - Deletes the specified number of messages\n" +
 		"!uptime - Shows how long the bot has been running\n" +
 		"!version - Shows a hash-based version of the bot\n" +
+		"!oss - Provides a link to the bot's source code\n" +
 		"!help - Shows this help message\n"
 	s.ChannelMessageSend(m.ChannelID, helpMessage)
 }

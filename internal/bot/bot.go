@@ -87,9 +87,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		commands.Version(s, m)
 	case "!help":
 		commands.Help(s, m)
+	case "!oss":
+		commands.Oss(s, m)
 	default:
 		commands.Unknown(s, m)
 	}
 }
-
-
