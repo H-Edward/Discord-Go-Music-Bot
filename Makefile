@@ -2,7 +2,7 @@ BINARY_NAME=music-bot
 
 # Choose the Go compiler
 GOBUILD=go build
-GO_SOURCE_HASH:=$(shell find . -name "*.go" | xargs cat | sha1sum | cut -c1-8)
+GO_SOURCE_HASH:=$(shell find . -name "*.go" | sort | xargs cat | sha1sum | cut -c1-8)
 
 all: build
 
