@@ -2,12 +2,12 @@ BINARY_NAME=music-bot
 
 # Choose the Go compiler
 GOBUILD=go build
-GO_SOURCE_HASH:=$(shell cat *.go | sha1sum | cut -c1-8)
+GO_SOURCE_HASH:=$(shell find . -name "*.go" | xargs cat | sha1sum | cut -c1-8)
 
 all: build
 
 build: 
-	$(GOBUILD) -ldflags "-X 'main.GoSourceHash=$(GO_SOURCE_HASH)'" -o $(BINARY_NAME) -v
+	$(GOBUILD) -ldflags "-X 'discord-go-music-bot/internal/state.GoSourceHash=$(GO_SOURCE_HASH)'" -o $(BINARY_NAME) -v ./cmd/bot
 
 clean: 
 	go clean

@@ -2,8 +2,6 @@ package audio
 
 import (
 	"bufio"
-	"discord-go-music-bot/internal/state"
-	"discord-go-music-bot/internal/validation"
 	"encoding/binary"
 	"io"
 	"os/exec"
@@ -11,6 +9,9 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+
+	"discord-go-music-bot/internal/state"
+	"discord-go-music-bot/internal/validation"
 )
 
 // Discord voice server/channel.  voice websocket and udp socket
@@ -99,6 +100,7 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 			if err != nil {
 				OnError("Error killing ffmpeg process", err)
 			}
+		case <-time.After(3 * time.Hour): // Fallback timeout
 		}
 	}()
 
