@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/state"
 	"log"
@@ -43,7 +44,7 @@ func StopSong(s *discordgo.Session, m *discordgo.MessageCreate) {
 		vc.Speaking(false)
 		err = vc.Disconnect()
 		if err != nil {
-			log.Println(state.ANSIRed + "Error disconnecting from voice channel: " + err.Error() + state.ANSIReset)
+			log.Println(constants.ANSIRed + "Error disconnecting from voice channel: " + err.Error() + constants.ANSIReset)
 		}
 	}()
 

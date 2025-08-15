@@ -1,4 +1,4 @@
-package state
+package constants
 
 const (
 	// magic numbers

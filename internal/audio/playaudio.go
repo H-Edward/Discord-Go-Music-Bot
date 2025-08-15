@@ -1,8 +1,8 @@
 package audio
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
-	"discord-go-music-bot/internal/state"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
@@ -17,14 +17,14 @@ func playAudio(s *discordgo.Session, guildID, textChannelID, url string, m *disc
 	if !discordutil.BotInChannel(s, guildID) {
 		vc, err = discordutil.JoinUserVoiceChannel(s, m)
 		if err != nil {
-			log.Println(state.ANSIRed + "Error joining voice channel: " + err.Error() + state.ANSIReset)
+			log.Println(constants.ANSIRed + "Error joining voice channel: " + err.Error() + constants.ANSIReset)
 			s.ChannelMessageSend(textChannelID, "Error joining voice channel.")
 			return
 		}
 	} else {
 		vc, err = discordutil.GetVoiceConnection(s, guildID)
 		if err != nil {
-			log.Println(state.ANSIRed + "Error getting voice connection: " + err.Error() + state.ANSIReset)
+			log.Println(constants.ANSIRed + "Error getting voice connection: " + err.Error() + constants.ANSIReset)
 			s.ChannelMessageSend(textChannelID, "Error with voice connection.")
 			return
 		}
@@ -37,5 +37,5 @@ func playAudio(s *discordgo.Session, guildID, textChannelID, url string, m *disc
 	}()
 
 	<-songDone
-	log.Println(state.ANSIBlue + "Song playback complete" + state.ANSIReset)
+	log.Println(constants.ANSIBlue + "Song playback complete" + constants.ANSIReset)
 }

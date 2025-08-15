@@ -1,6 +1,7 @@
 package audio
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 
 	"github.com/bwmarrin/discordgo"
@@ -16,7 +17,7 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 
 	var err error
 
-	state.OpusEncoder, err = gopus.NewEncoder(state.FrameRate, state.Channels, gopus.Audio)
+	state.OpusEncoder, err = gopus.NewEncoder(constants.FrameRate, constants.Channels, gopus.Audio)
 
 	if err != nil {
 		OnError("NewEncoder Error", err)
@@ -32,7 +33,7 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 		}
 
 		// try encoding pcm frame with Opus
-		opus, err := state.OpusEncoder.Encode(recv, state.FrameSize, state.MaxBytes)
+		opus, err := state.OpusEncoder.Encode(recv, constants.FrameSize, constants.MaxBytes)
 		if err != nil {
 			OnError("Encoding Error", err)
 			return

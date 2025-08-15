@@ -2,6 +2,7 @@ package commands
 
 import (
 	"discord-go-music-bot/internal/audio"
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"discord-go-music-bot/internal/validation"
 	"log"
@@ -28,7 +29,7 @@ func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool)
 		url, found_result = audio.SearchYoutube(searchQuery)
 
 		if !found_result {
-			log.Println(state.ANSIRed + "No results found for: " + searchQuery + state.ANSIReset)
+			log.Println(constants.ANSIRed + "No results found for: " + searchQuery + constants.ANSIReset)
 			s.ChannelMessageSend(m.ChannelID, "No results found for: "+searchQuery)
 			return
 		}

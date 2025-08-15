@@ -10,6 +10,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"discord-go-music-bot/internal/validation"
 )
@@ -30,7 +31,7 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 		"-o", "-",
 		url) // Get only audio, best quality
 
-	ffmpegCmd := exec.Command("ffmpeg", "-i", "pipe:0", "-f", "s16le", "-ar", strconv.Itoa(state.FrameRate), "-ac", strconv.Itoa(state.Channels), "pipe:1")
+	ffmpegCmd := exec.Command("ffmpeg", "-i", "pipe:0", "-f", "s16le", "-ar", strconv.Itoa(constants.FrameRate), "-ac", strconv.Itoa(constants.Channels), "pipe:1")
 
 	// Setup proper cleanup to ensure processes terminate
 	defer func() {
@@ -86,7 +87,7 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 	}()
 
 	// Set up reading from ffmpeg output
-	ffmpegbuf := bufio.NewReaderSize(ffmpegOut, state.FfmpegBufferSize)
+	ffmpegbuf := bufio.NewReaderSize(ffmpegOut, constants.FfmpegBufferSize)
 
 	// Handle stopping ffmpeg process if needed
 	go func() {
@@ -160,7 +161,7 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 		}
 
 		// Process audio normally
-		audiobuf := make([]int16, state.FrameSize*state.Channels)
+		audiobuf := make([]int16, constants.FrameSize*constants.Channels)
 		err = binary.Read(ffmpegbuf, binary.LittleEndian, &audiobuf)
 		if err == io.EOF || err == io.ErrUnexpectedEOF {
 			if !dataReceived {
@@ -194,10 +195,10 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 		for i := range audiobuf {
 			// Calculate new value and clamp to int16 range to prevent distortion
 			newValue := float64(audiobuf[i]) * currentVolume
-			if newValue > state.MaxClampValue {
-				newValue = state.MaxClampValue
-			} else if newValue < state.MinClampValue {
-				newValue = state.MinClampValue
+			if newValue > constants.MaxClampValue {
+				newValue = constants.MaxClampValue
+			} else if newValue < constants.MinClampValue {
+				newValue = constants.MinClampValue
 			}
 			audiobuf[i] = int16(newValue)
 		}
