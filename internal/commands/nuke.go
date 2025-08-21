@@ -24,6 +24,10 @@ func NukeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Invalid number of messages")
 		return
 	}
+	if num < 1 || num > 100 {
+		s.ChannelMessageSend(m.ChannelID, "Please specify a number between 1 and 100")
+		return
+	}
 	num++ // Include the command message itself
 
 	messages, err := s.ChannelMessages(m.ChannelID, num, "", "", "")
@@ -33,6 +37,7 @@ func NukeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	for _, message := range messages {
 		s.ChannelMessageDelete(m.ChannelID, message.ID)
+
 	}
 	s.ChannelMessageSend(m.ChannelID, "Nuked "+strconv.Itoa(num-1)+" messages.")
 }
