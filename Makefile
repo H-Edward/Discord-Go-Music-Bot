@@ -54,13 +54,13 @@ docker-network-rm:
 	docker network rm musicbot-net || echo "Network does not exist"
 
 docker-refresh-build: # Update the image with the latest code and restart the container
-    -docker stop $(BINARY_NAME)
-    -docker rm $(BINARY_NAME)
-    $(MAKE) docker-build
-    $(MAKE) docker-run
+	-docker stop $(BINARY_NAME)
+	-docker rm $(BINARY_NAME)
+	$(MAKE) docker-build
+	$(MAKE) docker-run
 
 docker-clean: # Delete all resources related to the bot
-    -docker stop $(BINARY_NAME)
-    -docker rm $(BINARY_NAME)
-    -docker rmi $(BINARY_NAME)
-    -docker network rm musicbot-net || echo "Network does not exist"
+	-docker stop $(BINARY_NAME)
+	-docker rm $(BINARY_NAME)
+	-docker rmi $(BINARY_NAME)
+	-docker network rm musicbot-net || echo "Network does not exist"
