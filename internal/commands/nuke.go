@@ -4,6 +4,7 @@ import (
 	"discord-go-music-bot/internal/validation"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -37,7 +38,7 @@ func NukeMessages(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	for _, message := range messages {
 		s.ChannelMessageDelete(m.ChannelID, message.ID)
-
+		time.Sleep(20 * time.Millisecond) // Rate limit to avoid hitting Discord's API limits
 	}
 	s.ChannelMessageSend(m.ChannelID, "Nuked "+strconv.Itoa(num-1)+" messages.")
 }
