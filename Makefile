@@ -53,6 +53,14 @@ docker-kill:
 docker-network-rm:
 	docker network rm musicbot-net || echo "Network does not exist"
 
-docker-refresh-build: docker-stop docker-rm docker-build docker-run # Update the image with the latest code and restart the container
+docker-refresh-build: # Update the image with the latest code and restart the container
+	-docker-stop
+	-docker-rm 
+	docker-build 
+	docker-run
 
-docker-clean : docker-stop docker-rm docker-rmi docker-network-rm # Delete all resources related to the bot
+docker-clean : # Delete all resources related to the bot
+	-docker-stop 
+	-docker-rm
+	-docker-rmi 
+	-docker-network-rm
