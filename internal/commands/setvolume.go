@@ -12,7 +12,7 @@ import (
 func SetVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
 	args := strings.Fields(m.Content)
 	if len(args) < 2 {
-		s.ChannelMessageSend(m.ChannelID, "Usage: !volume <value between 0 and 200>")
+		ShowVolume(s, m)
 		return
 	}
 
@@ -32,5 +32,5 @@ func SetVolume(s *discordgo.Session, m *discordgo.MessageCreate) {
 	state.Volume[m.GuildID] = newVolume
 	state.VolumeMutex.Unlock()
 
-	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Volume set to %.2f%%", preservedVolume))
+	s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Volume set to %.1f%%", preservedVolume))
 }
