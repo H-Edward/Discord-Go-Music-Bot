@@ -72,6 +72,7 @@ func TestSanitiseSearchQuery(t *testing.T) {
 		{"valid123 query456", "valid123 query456", true},                           // alphanumeric
 		{"mix3d Ch@ract3rs & Spac3s!", "mix3d Chract3rs Spac3s", true},             // mixed valid and invalid characters
 		{"!@#$%^&*()_+", "", false},                                                // only special characters
+		{"    $$ ", "", false},                                                   // only spaces and special characters
 	}
 
 	for _, test := range tests {
