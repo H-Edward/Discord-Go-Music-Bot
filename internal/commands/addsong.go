@@ -13,7 +13,9 @@ import (
 
 func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool) { // mode (false for play, true for search)
 	var url string
+
 	if search_mode {
+		var hadToSanitise bool
 		if len(m.Content) < 7 {
 			s.ChannelMessageSend(m.ChannelID, "Invalid search query")
 			return
@@ -22,9 +24,15 @@ func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool)
 		searchQuery := strings.TrimSpace(m.Content[8:])
 
 		if !validation.IsValidSearchQuery(searchQuery) {
-			s.ChannelMessageSend(m.ChannelID, "Invalid search query")
-			return
+			var searchQuerySafeToUse bool
+			searchQuery, searchQuerySafeToUse = validation.SanitiseSearchQuery(searchQuery)
+			hadToSanitise = true
+			if !searchQuerySafeToUse {
+				s.ChannelMessageSend(m.ChannelID, "Invalid search query")
+				return
+			}
 		}
+
 		var found_result bool
 		url, found_result = audio.SearchYoutube(searchQuery)
 
@@ -34,7 +42,11 @@ func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool)
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, "Found: "+url)
+		if hadToSanitise {
+			s.ChannelMessageSend(m.ChannelID, "Found: "+url+" using: "+searchQuery)
+		} else {
+			s.ChannelMessageSend(m.ChannelID, "Found: "+url)
+		}
 	} else {
 		if len(m.Content) < 6 {
 			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
