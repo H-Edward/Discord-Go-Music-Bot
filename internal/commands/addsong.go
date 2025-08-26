@@ -3,6 +3,7 @@ package commands
 import (
 	"discord-go-music-bot/internal/audio"
 	"discord-go-music-bot/internal/constants"
+	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/state"
 	"discord-go-music-bot/internal/validation"
 	"log"
@@ -13,6 +14,11 @@ import (
 
 func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool) { // mode (false for play, true for search)
 	var url string
+
+	if !discordutil.IsUserInVoiceChannel(s, m) {
+		s.ChannelMessageSend(m.ChannelID, "You must be in a voice channel to use this command.")
+		return
+	}
 
 	if search_mode {
 		var hadToSanitise bool

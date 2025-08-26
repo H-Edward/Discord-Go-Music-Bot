@@ -38,3 +38,17 @@ func JoinUserVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) (*di
 	}
 	return nil, os.ErrNotExist
 }
+
+func IsUserInVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+	guild, err := s.State.Guild(m.GuildID)
+	if err != nil {
+		return false
+	}
+
+	for _, vs := range guild.VoiceStates {
+		if vs.UserID == m.Author.ID {
+			return true
+		}
+	}
+	return false
+}
