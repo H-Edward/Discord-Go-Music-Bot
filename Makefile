@@ -30,7 +30,7 @@ docker-network-create:
 
 docker-run:
 	docker run -d --name $(BINARY_NAME) --network musicbot-net --user 1000:1000 --read-only -v /app/config:/app/config:ro --cap-drop ALL \
-	--security-opt no-new-privileges --memory=1G --cpus=3 --pids-limit=20 --restart unless-stopped $(BINARY_NAME)
+	--security-opt no-new-privileges --memory=1G --cpus=3 --pids-limit=40 --restart unless-stopped $(BINARY_NAME)
 
 docker-logs:
 	docker logs -f $(BINARY_NAME)
