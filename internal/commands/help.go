@@ -1,8 +1,10 @@
 package commands
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"discord-go-music-bot/internal/state"
+)
 
-func Help(s *discordgo.Session, m *discordgo.MessageCreate) {
+func Help(ctx state.Context) {
 	helpMessage := "Commands:\n" +
 		"!ping - Responds with Pong\n" +
 		"!pong - Responds with Ping\n" +
@@ -20,5 +22,5 @@ func Help(s *discordgo.Session, m *discordgo.MessageCreate) {
 		"!version - Shows a hash-based version of the bot\n" +
 		"!oss - Provides a link to the bot's source code\n" +
 		"!help - Shows this help message\n"
-	s.ChannelMessageSend(m.ChannelID, helpMessage)
+	ctx.Reply(helpMessage)
 }

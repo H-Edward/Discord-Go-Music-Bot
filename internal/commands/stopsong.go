@@ -6,34 +6,32 @@ import (
 	"discord-go-music-bot/internal/state"
 	"log"
 	"time"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-func StopSong(s *discordgo.Session, m *discordgo.MessageCreate) {
+func StopSong(ctx state.Context) {
 	// Get the voice connection for the guild
-	vc, err := discordutil.GetVoiceConnection(s, m.GuildID)
+	vc, err := discordutil.GetVoiceConnection(ctx)
 	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, "Not in a voice channel")
+		ctx.Reply("Not in a voice channel")
 		return
 	}
 
 	// Signal the current song to stop
 	state.StopMutex.Lock()
-	if stopChan, exists := state.StopChannels[m.GuildID]; exists {
+	if stopChan, exists := state.StopChannels[ctx.GetGuildID()]; exists {
 		close(stopChan)
-		delete(state.StopChannels, m.GuildID)
+		delete(state.StopChannels, ctx.GetGuildID())
 	}
 	state.StopMutex.Unlock()
 
 	// Clear the queue for the guild
 	state.QueueMutex.Lock()
-	state.Queue[m.GuildID] = []string{}
+	state.Queue[ctx.GetGuildID()] = []string{}
 	state.QueueMutex.Unlock()
 
 	// Mark the bot as not playing
 	state.PlayingMutex.Lock()
-	state.Playing[m.GuildID] = false
+	state.Playing[ctx.GetGuildID()] = false
 	state.PlayingMutex.Unlock()
 
 	// Wait a moment for processes to terminate cleanly
@@ -49,5 +47,5 @@ func StopSong(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}()
 
 	// Notify the user
-	s.ChannelMessageSend(m.ChannelID, "Stopped playback and cleared the queue.")
+	ctx.Reply("Stopped playback and cleared the queue.")
 }
