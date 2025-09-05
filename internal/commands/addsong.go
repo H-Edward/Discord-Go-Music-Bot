@@ -20,10 +20,7 @@ func AddSong(ctx state.Context, search_mode bool) { // mode (false for play, tru
 
 	if search_mode {
 		var hadToSanitise bool
-		if len(ctx.Arguments["query"]) < 7 {
-			ctx.Reply("Invalid search query")
-			return
-		}
+
 
 		searchQuery := strings.TrimSpace(ctx.Arguments["query"])
 

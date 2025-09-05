@@ -90,10 +90,11 @@ func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate)
 		SourceType:   SourceTypeInteraction,
 		Session:      s,
 		Interaction:  i,
-		User:         i.Member.User,
+		User:         i.User,
 		GuildID:      i.GuildID,
-		ChannelID:    i.Message.ChannelID,
+		ChannelID:    i.ChannelID,
 		ArgumentsRaw: make(map[string]interface{}),
+		Arguments:    make(map[string]string),
 		CommandName:  i.ApplicationCommandData().Name,
 	}
 
@@ -116,6 +117,7 @@ func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate, command
 		ChannelID:    m.ChannelID,
 		GuildID:      m.GuildID,
 		ArgumentsRaw: make(map[string]interface{}),
+		Arguments:    make(map[string]string),
 		CommandName:  command,
 	}
 	ctx.determineCommandNameFromMessage()
