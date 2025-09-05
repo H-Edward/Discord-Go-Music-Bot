@@ -16,34 +16,33 @@ const (
 )
 
 type Context struct {
-	SourceType   CommandSourceType // Where the command came from (i.e., interaction or message)
-	Session      *discordgo.Session
-	Interaction  *discordgo.InteractionCreate // Will be nil if not an interaction
-	Message      *discordgo.MessageCreate     // Will be nil if not a message
-	User         *discordgo.User              // Caller of the command
-	GuildID      string                       // Guild ID where the command was called
-	ChannelID    string                       // Channel ID where the command was called
-	ArgumentsRaw map[string]interface{}       // Raw arguments from the command, type depends on source
-	Arguments    map[string]string            // Standardised arguments, types are consistent
-	CommandName  string                       // Name of the command being executed, used for determining argument keys
+	SourceType           CommandSourceType // Where the command came from (i.e., interaction or message)
+	Session              *discordgo.Session
+	Interaction          *discordgo.InteractionCreate // Will be nil if not an interaction
+	Message              *discordgo.MessageCreate     // Will be nil if not a message
+	User                 *discordgo.User              // Caller of the command
+	GuildID              string                       // Guild ID where the command was called
+	ChannelID            string                       // Channel ID where the command was called
+	ArgumentsRaw         map[string]interface{}       // Raw arguments from the command, type depends on source
+	Arguments            map[string]string            // Standardised arguments, types are consistent
+	CommandName          string                       // Name of the command being executed, used for determining argument keys
+	InteractionResponded bool                         // Whether the interaction has been responded to
 }
 
 // Wrappers
 
 func (ctx *Context) Reply(message string) {
-	if ctx.SourceType == SourceTypeInteraction && ctx.Interaction != nil {
-		// multiple messages need to be sent
+	if ctx.SourceType == SourceTypeInteraction && !ctx.InteractionResponded {
 		ctx.Session.InteractionRespond(ctx.Interaction.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: message,
 			},
 		})
+		ctx.InteractionResponded = true
 		return
-	}
-
-	if ctx.SourceType == SourceTypeMessage && ctx.Message != nil {
-		ctx.Session.ChannelMessageSend(ctx.Message.ChannelID, message)
+	} else {
+		ctx.Session.ChannelMessageSend(ctx.ChannelID, message)
 	}
 }
 
@@ -89,15 +88,16 @@ func (ctx *Context) getArgumentRaw(key string) (interface{}, bool) {
 
 func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate) *Context {
 	ctx := &Context{
-		SourceType:   SourceTypeInteraction,
-		Session:      s,
-		Interaction:  i,
-		User:         i.User,
-		GuildID:      i.GuildID,
-		ChannelID:    i.ChannelID,
-		ArgumentsRaw: make(map[string]interface{}),
-		Arguments:    make(map[string]string),
-		CommandName:  i.ApplicationCommandData().Name,
+		SourceType:           SourceTypeInteraction,
+		Session:              s,
+		Interaction:          i,
+		User:                 i.User,
+		GuildID:              i.GuildID,
+		ChannelID:            i.ChannelID,
+		ArgumentsRaw:         make(map[string]interface{}),
+		Arguments:            make(map[string]string),
+		CommandName:          i.ApplicationCommandData().Name,
+		InteractionResponded: false,
 	}
 
 	if data := i.ApplicationCommandData(); data.Name != "" {
