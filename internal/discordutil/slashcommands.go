@@ -2,7 +2,6 @@ package discordutil
 
 import (
 	"discord-go-music-bot/internal/constants"
-	"fmt"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
@@ -88,10 +87,9 @@ func SetupSlashCommands(s *discordgo.Session) {
 			if err != nil {
 				log.Fatalf("Could not create '%s' command: %v", cmd.Name, err)
 			} else {
-				fmt.Printf(constants.ANSIBlue+"Registered command: %s\n"+constants.ANSIReset, cmd.Name)
+				log.Printf(constants.ANSIBlue+"Registered command: %s\n"+constants.ANSIReset, cmd.Name)
 			}
 		}
 	}
 	log.Println(constants.ANSIBlue + "Slash commands setup complete." + constants.ANSIReset)
 }
-
