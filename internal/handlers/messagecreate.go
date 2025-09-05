@@ -21,7 +21,6 @@ func HandleMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	ctx := state.NewMessageContext(s, m, command)
 
-
 	switch ctx.CommandName {
 	case "ping":
 		commands.Pong(*ctx)

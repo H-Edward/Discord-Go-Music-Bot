@@ -107,7 +107,6 @@ func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate)
 		ctx.User = i.Member.User
 	}
 
-
 	ctx.standardiseArguments()
 	return ctx
 }
@@ -133,12 +132,13 @@ func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate, command
 
 }
 
-func (ctx *Context) determineCommandNameFromMessage() string {
+func (ctx *Context) determineCommandNameFromMessage() {
 	command := strings.Fields(ctx.GetMessage().Content)[0]
 	if len(command) > 0 && command[0] == '!' {
-		return command[1:] // Remove the '!' prefix
+		ctx.CommandName = command[1:]
+		return
 	}
-	return ""
+	ctx.CommandName = ""
 }
 
 func (ctx *Context) determineArgumentsFromMessage() {
