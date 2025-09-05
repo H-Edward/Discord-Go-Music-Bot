@@ -7,7 +7,12 @@ import (
 )
 
 func SetVolume(ctx state.Context) {
-	volume := ctx.Arguments["volume"]
+	volume := ctx.Arguments["level"]
+
+	if len(volume) < 1 {
+		CurrentVolume(ctx)
+		return
+	}
 
 	newVolume, err := strconv.ParseFloat(volume, 64)
 	if err != nil || newVolume < 0.0 || newVolume > 200.0 {
