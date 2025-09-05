@@ -87,7 +87,7 @@ func SetupSlashCommands(s *discordgo.Session) {
 			if err != nil {
 				log.Fatalf("Could not create '%s' command: %v", cmd.Name, err)
 			} else {
-				log.Printf(constants.ANSIBlue+"Registered command: %s\n"+constants.ANSIReset, cmd.Name)
+				log.Printf(constants.ANSIBlue+"Registered command: %s"+constants.ANSIReset, cmd.Name)
 			}
 		}
 	}
