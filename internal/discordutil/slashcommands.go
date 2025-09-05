@@ -2,12 +2,15 @@ package discordutil
 
 import (
 	"discord-go-music-bot/internal/constants"
+	"fmt"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func SetupSlashCommands(s *discordgo.Session) {
+	log.Println(constants.ANSIBlue + "Setting up slash commands" + constants.ANSIReset)
+	var theNumberOneAsFloat float64 = 1.0
 
 	commands := []*discordgo.ApplicationCommand{
 		{Name: "ping", Description: "Replies with Pong"},
@@ -55,6 +58,8 @@ func SetupSlashCommands(s *discordgo.Session) {
 					Name:        "count",
 					Description: "The number of messages to delete (1-100)",
 					Required:    true,
+					MaxValue:    100.0,
+					MinValue:    &theNumberOneAsFloat,
 				},
 			},
 		},
@@ -64,11 +69,29 @@ func SetupSlashCommands(s *discordgo.Session) {
 		{Name: "oss", Description: "Show the bot's open source information"},
 	}
 
-	for _, v := range commands {
-		_, err := s.ApplicationCommandCreate(s.State.User.ID, "", v)
-		if err != nil {
-			log.Println(constants.ANSIRed + "Cannot create slash command " + v.Name + ": " + err.Error() + constants.ANSIReset)
-		}
+	// Since registering commands takes a bit of time, only register them if they aren't present already
+	existingCommands, err := s.ApplicationCommands(s.State.User.ID, "")
+	if err != nil {
+		log.Fatalf("Could not fetch existing commands: %v", err)
 	}
 
+	for _, cmd := range commands {
+		found := false
+		for _, existingCmd := range existingCommands {
+			if cmd.Name == existingCmd.Name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			_, err := s.ApplicationCommandCreate(s.State.User.ID, "", cmd)
+			if err != nil {
+				log.Fatalf("Could not create '%s' command: %v", cmd.Name, err)
+			} else {
+				fmt.Printf(constants.ANSIBlue+"Registered command: %s\n"+constants.ANSIReset, cmd.Name)
+			}
+		}
+	}
+	log.Println(constants.ANSIBlue + "Slash commands setup complete." + constants.ANSIReset)
 }
+
