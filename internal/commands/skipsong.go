@@ -3,28 +3,26 @@ package commands
 import (
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/state"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-func SkipSong(s *discordgo.Session, m *discordgo.MessageCreate) {
-	vc, err := discordutil.GetVoiceConnection(s, m.GuildID)
+func SkipSong(ctx state.Context) {
+	vc, err := discordutil.GetVoiceConnection(ctx)
 	if err != nil {
-		s.ChannelMessageSend(m.ChannelID, "Not in a voice channel")
+		ctx.Reply("Not in a voice channel")
 		return
 	}
 
 	// Signal the current song to stop
 	state.StopMutex.Lock()
-	if stopChan, exists := state.StopChannels[m.GuildID]; exists {
+	if stopChan, exists := state.StopChannels[ctx.GetGuildID()]; exists {
 		close(stopChan)
-		delete(state.StopChannels, m.GuildID)
+		delete(state.StopChannels, ctx.GetGuildID())
 	}
 	state.StopMutex.Unlock()
 
 	vc.Speaking(false)
 
-	s.ChannelMessageSend(m.ChannelID, "Skipping current song")
+	ctx.Reply("Skipping current song")
 
 	// The song will stop, and the queue processor will automatically move to the next song
 	// We don't need to start a new queue processor

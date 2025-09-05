@@ -8,33 +8,31 @@ import (
 	"discord-go-music-bot/internal/validation"
 	"log"
 	"strings"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool) { // mode (false for play, true for search)
+func AddSong(ctx state.Context, search_mode bool) { // mode (false for play, true for search)
 	var url string
 
-	if !discordutil.IsUserInVoiceChannel(s, m) {
-		s.ChannelMessageSend(m.ChannelID, "You must be in a voice channel to use this command.")
+	if !discordutil.IsUserInVoiceChannel(ctx) {
+		ctx.Reply("You must be in a voice channel to use this command.")
 		return
 	}
 
 	if search_mode {
 		var hadToSanitise bool
-		if len(m.Content) < 7 {
-			s.ChannelMessageSend(m.ChannelID, "Invalid search query")
+		if len(ctx.Arguments["query"]) < 7 {
+			ctx.Reply("Invalid search query")
 			return
 		}
 
-		searchQuery := strings.TrimSpace(m.Content[8:])
+		searchQuery := strings.TrimSpace(ctx.Arguments["query"])
 
 		if !validation.IsValidSearchQuery(searchQuery) {
 			var searchQuerySafeToUse bool
 			searchQuery, searchQuerySafeToUse = validation.SanitiseSearchQuery(searchQuery)
 			hadToSanitise = true
 			if !searchQuerySafeToUse {
-				s.ChannelMessageSend(m.ChannelID, "Invalid search query")
+				ctx.Reply("Invalid search query")
 				return
 			}
 		}
@@ -44,44 +42,44 @@ func AddSong(s *discordgo.Session, m *discordgo.MessageCreate, search_mode bool)
 
 		if !found_result {
 			log.Println(constants.ANSIRed + "No results found for: " + searchQuery + constants.ANSIReset)
-			s.ChannelMessageSend(m.ChannelID, "No results found for: "+searchQuery)
+			ctx.Reply("No results found for: " + searchQuery)
 			return
 		}
 
 		if hadToSanitise {
-			s.ChannelMessageSend(m.ChannelID, "Found: "+url+" using: "+searchQuery)
+			ctx.Reply("Found: " + url + " using: " + searchQuery)
 		} else {
-			s.ChannelMessageSend(m.ChannelID, "Found: "+url)
+			ctx.Reply("Found: " + url)
 		}
 	} else {
-		if len(m.Content) < 6 {
-			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
+		if len(ctx.Arguments["url"]) < 6 {
+			ctx.Reply("Invalid URL")
 			return
 		}
 
-		url = strings.TrimSpace(m.Content[6:])
+		url = strings.TrimSpace(ctx.Arguments["url"])
 
 		if !validation.IsValidURL(url) {
-			s.ChannelMessageSend(m.ChannelID, "Invalid URL")
+			ctx.Reply("Invalid URL")
 			return
 		}
 
 	}
 	state.QueueMutex.Lock()
-	state.Queue[m.GuildID] = append(state.Queue[m.GuildID], url)
+	state.Queue[ctx.GetGuildID()] = append(state.Queue[ctx.GetGuildID()], url)
 	state.QueueMutex.Unlock()
 
 	state.PlayingMutex.Lock()
-	isAlreadyPlaying := state.Playing[m.GuildID]
+	isAlreadyPlaying := state.Playing[ctx.GetGuildID()]
 	state.PlayingMutex.Unlock()
 
-	s.ChannelMessageSend(m.ChannelID, "Added to queue.")
+	ctx.Reply("Added to queue.")
 
 	if !isAlreadyPlaying {
 		// Start processing the queue if the bot is idle
 		state.PlayingMutex.Lock()
-		state.Playing[m.GuildID] = true
+		state.Playing[ctx.GetGuildID()] = true
 		state.PlayingMutex.Unlock()
-		audio.ProcessQueue(s, m.GuildID, m.ChannelID, m)
+		audio.ProcessQueue(ctx)
 	}
 }

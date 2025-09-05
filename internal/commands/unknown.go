@@ -1,21 +1,20 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/state"
 	"os"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-func Unknown(s *discordgo.Session, m *discordgo.MessageCreate) {
+func Unknown(ctx state.Context) {
 	// Check .env for how to handle unknown commands
 	// default case is "ignore"
 
 	unknown_commands := os.Getenv("UNKNOWN_COMMANDS")
 	switch unknown_commands {
 	case "help":
-		Help(s, m)
+		Help(ctx)
 	case "error":
-		s.ChannelMessageSend(m.ChannelID, "Unknown command. Type !help for a list of commands.")
+		ctx.Reply("Unknown command. Type !help for a list of commands.")
 	default:
 		return
 	}

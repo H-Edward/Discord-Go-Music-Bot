@@ -7,25 +7,23 @@ import (
 	"fmt"
 	"log"
 	"time"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-func ProcessQueue(s *discordgo.Session, guildID, textChannelID string, m *discordgo.MessageCreate) {
+func ProcessQueue(ctx state.Context) {
 	go func() {
 		for {
 			state.QueueMutex.Lock()
-			if len(state.Queue[guildID]) == 0 {
+			if len(state.Queue[ctx.GetGuildID()]) == 0 {
 				// If the queue is empty, mark the bot as idle and leave the voice channel.
 				state.PlayingMutex.Lock()
-				state.Playing[guildID] = false
+				state.Playing[ctx.GetGuildID()] = false
 				state.PlayingMutex.Unlock()
 				state.QueueMutex.Unlock()
 
 				// Wait a moment before disconnecting to avoid rapid connect/disconnect cycles
 				time.Sleep(500 * time.Millisecond)
 
-				vc, err := discordutil.GetVoiceConnection(s, guildID)
+				vc, err := discordutil.GetVoiceConnection(ctx)
 				if err == nil {
 					vc.Speaking(false)
 					vc.Disconnect()
@@ -34,40 +32,40 @@ func ProcessQueue(s *discordgo.Session, guildID, textChannelID string, m *discor
 			}
 
 			// Dequeue the next song
-			currentURL := state.Queue[guildID][0]
-			state.Queue[guildID] = state.Queue[guildID][1:]
-			songLength := len(state.Queue[guildID])
+			currentURL := state.Queue[ctx.GetGuildID()][0]
+			state.Queue[ctx.GetGuildID()] = state.Queue[ctx.GetGuildID()][1:]
+			songLength := len(state.Queue[ctx.GetGuildID()])
 			state.QueueMutex.Unlock()
 
 			log.Printf(constants.ANSIBlue+"Playing song, %d more in queue "+constants.ANSIReset, songLength)
-			s.ChannelMessageSend(textChannelID, fmt.Sprintf("Now playing: %s", currentURL))
+			ctx.Reply(fmt.Sprintf("Now playing: %s", currentURL))
 
 			// Create a stop channel for this song
 			state.StopMutex.Lock()
 			stop := make(chan bool)
-			state.StopChannels[guildID] = stop
+			state.StopChannels[ctx.GetGuildID()] = stop
 			state.StopMutex.Unlock()
 
 			// Create pause channel
 			state.PauseChMutex.Lock()
 			pauseCh := make(chan bool, 1) // Buffered channel
-			state.PauseChs[guildID] = pauseCh
+			state.PauseChs[ctx.GetGuildID()] = pauseCh
 			state.PauseChMutex.Unlock()
 
 			// Initialize pause state
 			state.PauseMutex.Lock()
-			pauseCh <- state.Paused[guildID]
+			pauseCh <- state.Paused[ctx.GetGuildID()]
 			state.PauseMutex.Unlock()
 
 			done := make(chan bool)
-			go playAudio(s, guildID, textChannelID, currentURL, m, stop, pauseCh, done)
+			go playAudio(ctx, currentURL, stop, pauseCh, done)
 			<-done
 
 			log.Println(constants.ANSIBlue + "Song finished, moving to next in queue" + constants.ANSIReset)
 
 			// Clean up pause channel
 			state.PauseChMutex.Lock()
-			delete(state.PauseChs, guildID)
+			delete(state.PauseChs, ctx.GetGuildID())
 			state.PauseChMutex.Unlock()
 		}
 	}()

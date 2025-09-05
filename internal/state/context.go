@@ -1,6 +1,7 @@
 package state
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -15,30 +16,31 @@ const (
 )
 
 type Context struct {
-	SourceType  CommandSourceType // Where the command came from (i.e., interaction or message)
-	Session     *discordgo.Session
-	Interaction *discordgo.InteractionCreate // Will be nil if not an interaction
-	Message     *discordgo.MessageCreate     // Will be nil if not a message
-	User        *discordgo.User              // Caller of the command
-	GuildID     string                       // Guild ID where the command was called
-	ChannelID   string                       // Channel ID where the command was called
-	Arguments   map[string]interface{}
-	CommandName string // Name of the command being executed, used for determining argument keys
+	SourceType   CommandSourceType // Where the command came from (i.e., interaction or message)
+	Session      *discordgo.Session
+	Interaction  *discordgo.InteractionCreate // Will be nil if not an interaction
+	Message      *discordgo.MessageCreate     // Will be nil if not a message
+	User         *discordgo.User              // Caller of the command
+	GuildID      string                       // Guild ID where the command was called
+	ChannelID    string                       // Channel ID where the command was called
+	ArgumentsRaw map[string]interface{}       // Raw arguments from the command, type depends on source
+	Arguments    map[string]string            // Standardised arguments, types are consistent
+	CommandName  string                       // Name of the command being executed, used for determining argument keys
 }
 
 // Wrappers
 
-func (c *Context) Reply(message string) {
-	if c.SourceType == SourceTypeInteraction && c.Interaction != nil {
-		c.Session.InteractionRespond(c.Interaction.Interaction, &discordgo.InteractionResponse{
+func (ctx *Context) Reply(message string) {
+	if ctx.SourceType == SourceTypeInteraction && ctx.Interaction != nil {
+		ctx.Session.InteractionRespond(ctx.Interaction.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: message,
 			},
 		})
 	}
-	if c.SourceType == SourceTypeMessage && c.Message != nil {
-		c.Session.ChannelMessageSend(c.Message.ChannelID, message)
+	if ctx.SourceType == SourceTypeMessage && ctx.Message != nil {
+		ctx.Session.ChannelMessageSend(ctx.Message.ChannelID, message)
 	}
 
 }
@@ -46,34 +48,38 @@ func (c *Context) Reply(message string) {
 // Getters
 
 // Naive getters
-func (c *Context) GetSession() *discordgo.Session {
-	return c.Session
+func (ctx *Context) GetSession() *discordgo.Session {
+	return ctx.Session
 }
 
-func (c *Context) GetInteraction() *discordgo.InteractionCreate {
-	return c.Interaction
+func (ctx *Context) GetInteraction() *discordgo.InteractionCreate {
+	return ctx.Interaction
 }
 
-func (c *Context) GetMessage() *discordgo.MessageCreate {
-	return c.Message
+func (ctx *Context) GetMessage() *discordgo.MessageCreate {
+	return ctx.Message
 }
 
 // Lighter getters
 
-func (c *Context) GetUser() *discordgo.User {
-	return c.User
+func (ctx *Context) GetUser() *discordgo.User {
+	return ctx.User
 }
 
-func (c *Context) GetGuildID() string {
-	return c.GuildID
+func (ctx *Context) GetGuildID() string {
+	return ctx.GuildID
 }
 
-func (c *Context) GetChannelID() string {
-	return c.ChannelID
+func (ctx *Context) GetChannelID() string {
+	return ctx.ChannelID
 }
 
-func (c *Context) getArgument(key string) (interface{}, bool) {
-	val, exists := c.Arguments[key]
+func (ctx *Context) getArgument(key string) (interface{}, bool) {
+	val, exists := ctx.Arguments[key]
+	return val, exists
+}
+func (ctx *Context) getArgumentRaw(key string) (interface{}, bool) {
+	val, exists := ctx.ArgumentsRaw[key]
 	return val, exists
 }
 
@@ -81,43 +87,47 @@ func (c *Context) getArgument(key string) (interface{}, bool) {
 
 func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate) *Context {
 	ctx := &Context{
-		SourceType:  SourceTypeInteraction,
-		Session:     s,
-		Interaction: i,
-		User:        i.Member.User,
-		GuildID:     i.GuildID,
-		ChannelID:   i.Message.ChannelID,
-		Arguments:   make(map[string]interface{}),
-		CommandName: i.ApplicationCommandData().Name,
+		SourceType:   SourceTypeInteraction,
+		Session:      s,
+		Interaction:  i,
+		User:         i.Member.User,
+		GuildID:      i.GuildID,
+		ChannelID:    i.Message.ChannelID,
+		ArgumentsRaw: make(map[string]interface{}),
+		CommandName:  i.ApplicationCommandData().Name,
 	}
 
 	if data := i.ApplicationCommandData(); data.Name != "" {
 		for _, option := range data.Options {
-			ctx.Arguments[option.Name] = option.Value
+			ctx.ArgumentsRaw[option.Name] = option.Value
 		}
 	}
+
+	ctx.standardiseArguments()
 	return ctx
 }
 
 func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate, command string) *Context {
 	ctx := &Context{
-		SourceType:  SourceTypeMessage,
-		Session:     s,
-		Message:     m,
-		User:        m.Author,
-		ChannelID:   m.ChannelID,
-		GuildID:     m.GuildID,
-		Arguments:   make(map[string]interface{}),
-		CommandName: command,
+		SourceType:   SourceTypeMessage,
+		Session:      s,
+		Message:      m,
+		User:         m.Author,
+		ChannelID:    m.ChannelID,
+		GuildID:      m.GuildID,
+		ArgumentsRaw: make(map[string]interface{}),
+		CommandName:  command,
 	}
-	determineCommandNameFromMessage(ctx)
-	// Determine arguments from message content if needed
-	determineArgumentsFromMessage(ctx)
+	ctx.determineCommandNameFromMessage()
+
+	ctx.determineArgumentsFromMessage()
+
+	ctx.standardiseArguments()
 	return ctx
 
 }
 
-func determineCommandNameFromMessage(ctx *Context) string {
+func (ctx *Context) determineCommandNameFromMessage() string {
 	command := strings.Fields(ctx.GetMessage().Content)[0]
 	if len(command) > 0 && command[0] == '!' {
 		return command[1:] // Remove the '!' prefix
@@ -125,36 +135,88 @@ func determineCommandNameFromMessage(ctx *Context) string {
 	return ""
 }
 
-func determineArgumentsFromMessage(ctx *Context) {
-	// These aren't to be considered sanitised or validated, just parsed out of the message content
+func (ctx *Context) determineArgumentsFromMessage() {
+	// presume not sanitised
 	switch ctx.CommandName {
 	case "play":
 		// everything after !play is the url
 		if len(ctx.Message.Content) > 6 {
-			ctx.Arguments["url"] = ctx.Message.Content[6:]
 		} else {
-			ctx.Arguments["url"] = ""
+			ctx.ArgumentsRaw["url"] = ""
 		}
-
 	case "search":
 		if len(ctx.Message.Content) > 8 {
-			ctx.Arguments["query"] = ctx.Message.Content[8:]
+			ctx.ArgumentsRaw["query"] = ctx.Message.Content[8:]
 		} else {
-			ctx.Arguments["query"] = ""
+			ctx.ArgumentsRaw["query"] = ""
 		}
 	case "volume":
 		if len(ctx.Message.Content) > 8 {
-			ctx.Arguments["level"] = ctx.Message.Content[8:]
+			ctx.ArgumentsRaw["level"] = ctx.Message.Content[8:]
 		} else {
-			ctx.Arguments["level"] = ""
+			ctx.ArgumentsRaw["level"] = ""
 		}
 	case "nuke":
 		if len(ctx.Message.Content) > 6 {
-			ctx.Arguments["count"] = ctx.Message.Content[6:]
+			ctx.ArgumentsRaw["count"] = ctx.Message.Content[6:]
 		} else {
-			ctx.Arguments["count"] = ""
+			ctx.ArgumentsRaw["count"] = ""
 		}
 	default:
 		// No arguments to parse for other commands
 	}
+}
+
+// Convert raw arguments to standard types (not sanitised)
+func (ctx *Context) standardiseArguments() {
+	switch ctx.CommandName {
+	case "play": // url string
+		if val, exists := ctx.getArgumentRaw("url"); exists {
+			if strVal, ok := val.(string); ok {
+				ctx.Arguments["url"] = strVal
+			} else {
+				ctx.Arguments["url"] = ""
+			}
+		} else {
+			ctx.Arguments["url"] = ""
+		}
+	case "search": // query string
+		if val, exists := ctx.getArgumentRaw("query"); exists {
+			if strVal, ok := val.(string); ok {
+				ctx.Arguments["query"] = strVal
+			} else {
+				ctx.Arguments["query"] = ""
+			}
+		}
+
+	case "volume": // level int (0-200)
+		if val, exists := ctx.getArgumentRaw("level"); exists {
+			switch v := val.(type) {
+			case int:
+				ctx.Arguments["level"] = strconv.Itoa(v)
+			case float64:
+				ctx.Arguments["level"] = strconv.Itoa(int(v))
+			case string:
+				ctx.Arguments["level"] = strings.TrimSpace(v)
+			default:
+				ctx.Arguments["level"] = ""
+			}
+
+		}
+	case "nuke": // count int (1-100)
+		if val, exists := ctx.getArgumentRaw("count"); exists {
+			switch v := val.(type) {
+			case int:
+				ctx.Arguments["count"] = strconv.Itoa(v)
+			case float64:
+				ctx.Arguments["count"] = strconv.Itoa(int(v))
+			case string:
+				ctx.Arguments["count"] = strings.TrimSpace(v)
+			default:
+				ctx.Arguments["count"] = ""
+			}
+
+		}
+	}
+
 }
