@@ -23,7 +23,7 @@ func BotInChannel(ctx state.Context) bool {
 
 func JoinUserVoiceChannel(ctx state.Context) (*discordgo.VoiceConnection, error) {
 
-	guild, err := ctx.GetSession().State.Guild(ctx.GetChannelID())
+	guild, err := ctx.GetSession().State.Guild(ctx.GetGuildID())
 	if err != nil {
 		return nil, err
 	}
