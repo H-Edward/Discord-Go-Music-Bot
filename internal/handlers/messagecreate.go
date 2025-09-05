@@ -3,6 +3,7 @@ package handlers
 import (
 	"discord-go-music-bot/internal/commands"
 	"discord-go-music-bot/internal/constants"
+	"discord-go-music-bot/internal/state"
 	"log"
 	"strings"
 
@@ -16,39 +17,43 @@ func HandleMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.Bot || !strings.HasPrefix(m.Content, "!") { // ignore bot messages and messages not starting with '!'
 		return
 	}
+	command := strings.Fields(m.Content)[0]
 
-	switch strings.Fields(m.Content)[0] {
-	case "!ping":
-		commands.Pong(s, m)
-	case "!pong":
-		commands.Ping(s, m)
-	case "!play":
-		commands.AddSong(s, m, false) // false as in not a search
-	case "!search":
-		commands.AddSong(s, m, true) // true as in search for a song
-	case "!skip":
-		commands.SkipSong(s, m)
-	case "!queue":
-		commands.ShowQueue(s, m)
-	case "!stop":
-		commands.StopSong(s, m)
-	case "!pause", "!resume":
-		commands.PauseSong(s, m)
-	case "!volume":
-		commands.SetVolume(s, m)
-	case "!currentvolume":
-		commands.CurrentVolume(s, m)
-	case "!nuke": // delete n messages
-		commands.NukeMessages(s, m)
-	case "!uptime":
-		commands.Uptime(s, m)
-	case "!version":
-		commands.Version(s, m)
-	case "!help":
-		commands.Help(s, m)
-	case "!oss":
-		commands.Oss(s, m)
+	ctx := state.NewMessageContext(s, m, command)
+
+
+	switch ctx.CommandName {
+	case "ping":
+		commands.Pong(*ctx)
+	case "pong":
+		commands.Ping(*ctx)
+	case "play":
+		commands.AddSong(*ctx, false) // false as in not a search
+	case "search":
+		commands.AddSong(*ctx, true) // true as in search for a song
+	case "skip":
+		commands.SkipSong(*ctx)
+	case "queue":
+		commands.ShowQueue(*ctx)
+	case "stop":
+		commands.StopSong(*ctx)
+	case "pause", "!resume":
+		commands.PauseSong(*ctx)
+	case "volume":
+		commands.SetVolume(*ctx)
+	case "currentvolume":
+		commands.CurrentVolume(*ctx)
+	case "nuke": // delete n messages
+		commands.NukeMessages(*ctx)
+	case "uptime":
+		commands.Uptime(*ctx)
+	case "version":
+		commands.Version(*ctx)
+	case "help":
+		commands.Help(*ctx)
+	case "oss":
+		commands.Oss(*ctx)
 	default:
-		commands.Unknown(s, m)
+		commands.Unknown(*ctx)
 	}
 }
