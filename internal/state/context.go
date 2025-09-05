@@ -32,19 +32,20 @@ type Context struct {
 
 func (ctx *Context) Reply(message string) {
 	if ctx.SourceType == SourceTypeInteraction && ctx.Interaction != nil {
+		// multiple messages need to be sent
 		ctx.Session.InteractionRespond(ctx.Interaction.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: message,
 			},
 		})
+		return
 	}
+
 	if ctx.SourceType == SourceTypeMessage && ctx.Message != nil {
 		ctx.Session.ChannelMessageSend(ctx.Message.ChannelID, message)
 	}
 }
-
-
 
 // Getters
 
@@ -226,4 +227,15 @@ func (ctx *Context) standardiseArguments() {
 		}
 	}
 
+}
+
+func (ctx *Context) ArgumentstoString() string {
+	// this is for logging to stdout
+	var output string
+	for key, value := range ctx.Arguments {
+		if value != "" {
+			output += " " + key + "=" + value
+		}
+	}
+	return output
 }

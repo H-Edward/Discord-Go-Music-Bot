@@ -14,8 +14,11 @@ func HandleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreat
 	if i.Type != discordgo.InteractionApplicationCommand {
 		return
 	}
+
 	ctx := state.NewInteractionContext(s, i)
-	log.Println(constants.ANSIYellow + ctx.User.Username + ": " + i.Data.Type().String() + constants.ANSIReset)
+	//	log.Println(constants.ANSIYellow + m.Author.Username + ": " + m.Content + constants.ANSIReset)
+
+	log.Println(constants.ANSICyan + ctx.User.Username + ": " + ctx.CommandName + ctx.ArgumentstoString() + constants.ANSIReset)
 
 	switch ctx.CommandName {
 	case "ping":
