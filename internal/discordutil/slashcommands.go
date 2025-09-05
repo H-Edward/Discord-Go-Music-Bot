@@ -39,12 +39,12 @@ func SetupSlashCommands(s *discordgo.Session) {
 		{Name: "stop", Description: "Stop playing and clear the queue"},
 		{Name: "pause", Description: "Pause the current song"},
 		{Name: "resume", Description: "Resume the current song"},
-		{Name: "volume", Description: "Set the volume (0-100)",
+		{Name: "volume", Description: "Set the volume (0-200)",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionInteger,
 					Name:        "level",
-					Description: "The volume level (0-100)",
+					Description: "The volume level (0-200)",
 					Required:    false, // false since will default to showing current volume
 				},
 			},
@@ -55,9 +55,9 @@ func SetupSlashCommands(s *discordgo.Session) {
 				{
 					Type:        discordgo.ApplicationCommandOptionInteger,
 					Name:        "count",
-					Description: "The number of messages to delete (1-100)",
+					Description: "The number of messages to delete (1-200)",
 					Required:    true,
-					MaxValue:    100.0,
+					MaxValue:    200.0,
 					MinValue:    &theNumberOneAsFloat,
 				},
 			},
