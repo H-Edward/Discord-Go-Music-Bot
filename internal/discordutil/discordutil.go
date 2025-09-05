@@ -1,35 +1,36 @@
 package discordutil
 
 import (
+	"discord-go-music-bot/internal/state"
 	"os"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func GetVoiceConnection(s *discordgo.Session, guildID string) (*discordgo.VoiceConnection, error) {
-	vc := s.VoiceConnections[guildID]
+func GetVoiceConnection(ctx state.Context) (*discordgo.VoiceConnection, error) {
+	vc := ctx.GetSession().VoiceConnections[ctx.GetGuildID()]
 	if vc == nil {
 		return nil, os.ErrNotExist
 	}
 	return vc, nil
 }
 
-func BotInChannel(s *discordgo.Session, guildID string) bool {
+func BotInChannel(ctx state.Context) bool {
 	// determines whether the bot is in the guild's channel
-	_, err := GetVoiceConnection(s, guildID)
+	_, err := GetVoiceConnection(ctx)
 	return err == nil
 }
 
-func JoinUserVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) (*discordgo.VoiceConnection, error) {
+func JoinUserVoiceChannel(ctx state.Context) (*discordgo.VoiceConnection, error) {
 
-	guild, err := s.State.Guild(m.GuildID)
+	guild, err := ctx.GetSession().State.Guild(ctx.GetChannelID())
 	if err != nil {
 		return nil, err
 	}
 
 	for _, vs := range guild.VoiceStates {
-		if vs.UserID == m.Author.ID {
-			vc, err := s.ChannelVoiceJoin(m.GuildID, vs.ChannelID, false, true)
+		if vs.UserID == ctx.GetUser().ID {
+			vc, err := ctx.GetSession().ChannelVoiceJoin(ctx.GuildID, vs.ChannelID, false, true)
 			if err != nil {
 				return nil, err
 			}
@@ -39,14 +40,14 @@ func JoinUserVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) (*di
 	return nil, os.ErrNotExist
 }
 
-func IsUserInVoiceChannel(s *discordgo.Session, m *discordgo.MessageCreate) bool {
-	guild, err := s.State.Guild(m.GuildID)
+func IsUserInVoiceChannel(ctx state.Context) bool {
+	guild, err := ctx.GetSession().State.Guild(ctx.GetGuildID())
 	if err != nil {
 		return false
 	}
 
 	for _, vs := range guild.VoiceStates {
-		if vs.UserID == m.Author.ID {
+		if vs.UserID == ctx.GetUser().ID {
 			return true
 		}
 	}
