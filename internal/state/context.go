@@ -103,6 +103,10 @@ func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate)
 			ctx.ArgumentsRaw[option.Name] = option.Value
 		}
 	}
+	if ctx.User == nil && i.Member != nil {
+		ctx.User = i.Member.User
+	}
+
 
 	ctx.standardiseArguments()
 	return ctx
