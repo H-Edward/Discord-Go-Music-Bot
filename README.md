@@ -45,9 +45,9 @@ The bot supports the following features:
 
 - Getting a help message
 
+- Slash commands and prefix commands \(prefix is `!`\)
 
-
-_more features to come as they are requested or I feel like adding them_
+_more features to come as they are requested_
 
 ## Installation
 
@@ -245,33 +245,33 @@ Add a video to the queue by URL
 !play https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 Search for a video and add it to the queue
-!search Rick Astley Never Gonna Give You Up
+/search Rick Astley Never Gonna Give You Up
 
-!pause
+/pause
 
-!resume
+/resume
 
-!volume 50
+/volume 50
 
-!volume 200
+/volume 200
 
-!volume 100
+/volume 100
 
-!skip
+/skip
 
-!stop
+.stop
 
 Show the current queue of videos
-!queue
+/queue
 
 Delete the last 50 messages in the channel
-!nuke 50
+/nuke 50
 ```
 
 All the other commands can be seen by messaging:
 
 ```txt
-!help
+/help
 ```
 
 This will return a message with all the commands and their usage.
