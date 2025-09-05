@@ -14,7 +14,7 @@ func Unknown(ctx state.Context) {
 	case "help":
 		Help(ctx)
 	case "error":
-		ctx.Reply("Unknown command. Type !help for a list of commands.")
+		ctx.Reply("Unknown command. Type /help for a list of commands.")
 	default:
 		return
 	}

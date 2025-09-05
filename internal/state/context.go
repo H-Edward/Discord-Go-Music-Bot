@@ -42,8 +42,9 @@ func (ctx *Context) Reply(message string) {
 	if ctx.SourceType == SourceTypeMessage && ctx.Message != nil {
 		ctx.Session.ChannelMessageSend(ctx.Message.ChannelID, message)
 	}
-
 }
+
+
 
 // Getters
 
