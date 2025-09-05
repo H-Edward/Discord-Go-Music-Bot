@@ -124,6 +124,7 @@ func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate, command
 		ArgumentsRaw: make(map[string]interface{}),
 		Arguments:    make(map[string]string),
 		CommandName:  command,
+		InteractionResponded: false, // not an interaction but keep for uniformity
 	}
 	ctx.determineCommandNameFromMessage()
 
