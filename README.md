@@ -17,6 +17,7 @@ There is a small amount of configuration needed to get it up and running, and on
       - [Updating with Docker](#updating-with-docker)
   - [Environment Variables](#environment-variables)
   - [Usage within Discord](#usage-within-discord)
+  - [Technical Details](#technical-details)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -235,14 +236,23 @@ First, you can test the bot is working by messaging:
 ```txt
 !ping
 ```
+as well as the slash command (to make sure they are registered)
+
+```txt
+/ping 
+
+```
 
 This should return a message saying `Pong` if the bot is running correctly.
+
+The bot supports the usage of both old style commands with a simple **\!** before each command, as well as the more involved slash commands.
+Both can be used interchangeably with only minor differences in usage and responses.
 
 Here are some other command examples for your reference:
 
 ```txt
 Add a video to the queue by URL
-!play https://www.youtube.com/watch?v=dQw4w9WgXcQ
+/play https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
 Search for a video and add it to the queue
 /search Rick Astley Never Gonna Give You Up
@@ -257,15 +267,26 @@ Search for a video and add it to the queue
 
 /volume 100
 
+Show the current volume for the guild
+/currentvolume
+
+Skip the current video playing
 /skip
 
-.stop
+Stop all playback and clear the queue
+/stop
 
-Show the current queue of videos
+Show the current queue of videos excluding the current video
 /queue
 
 Delete the last 50 messages in the channel
 /nuke 50
+
+See the bot's uptime (requires server admin)
+/uptime
+
+See the bot's version (requires server admin)
+/version
 ```
 
 All the other commands can be seen by messaging:
@@ -275,6 +296,16 @@ All the other commands can be seen by messaging:
 ```
 
 This will return a message with all the commands and their usage.
+
+## Technical Details
+
+The bot is written mainly using the [DiscordGo](https://github.com/bwmarrin/discordgo), with others being listed in go.mod.
+
+The bot uses `yt-dlp` to download Youtube video and then uses `ffmpeg` to convert the video to audio and stream it to Discord.
+
+Some OOP principles are in use, and if anyone would like to improve this aspect of the bot, please feel free to submit a pull request.
+
+Much of the bots functionality relies on a Context struct, which is passed to each command handler and contains all the information needed to process the command.
 
 ## Contributing
 
