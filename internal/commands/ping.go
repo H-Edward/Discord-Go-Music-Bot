@@ -1,7 +1,7 @@
 package commands
 
-import "github.com/bwmarrin/discordgo"
+import "discord-go-music-bot/internal/state"
 
-func Ping(s *discordgo.Session, m *discordgo.MessageCreate) {
-	s.ChannelMessageSend(m.ChannelID, "Ping")
+func Ping(ctx state.Context) {
+	ctx.Reply("Ping")
 }

@@ -3,27 +3,24 @@ package commands
 import (
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/state"
-
-	"github.com/bwmarrin/discordgo"
 )
 
-func PauseSong(s *discordgo.Session, m *discordgo.MessageCreate) {
-	guildID := m.GuildID
+func PauseSong(ctx state.Context) {
 
 	// Check if the bot is in a voice channel
-	if !discordutil.BotInChannel(s, guildID) {
-		s.ChannelMessageSend(m.ChannelID, "Not in a voice channel.")
+	if !discordutil.BotInChannel(ctx) {
+		ctx.Reply("Not in a voice channel.")
 		return
 	}
 
 	state.PauseMutex.Lock()
-	currentState := state.Paused[guildID]
-	state.Paused[guildID] = !currentState // Toggle pause state
+	currentState := state.Paused[ctx.GetGuildID()]
+	state.Paused[ctx.GetGuildID()] = !currentState // Toggle pause state
 	state.PauseMutex.Unlock()
 
 	// Signal the pause channel with the new state
 	state.PauseChMutex.Lock()
-	if ch, exists := state.PauseChs[guildID]; exists {
+	if ch, exists := state.PauseChs[ctx.GetGuildID()]; exists {
 		select {
 		case ch <- !currentState: // Send the new state
 		default: // Channel is full, discard
@@ -33,8 +30,8 @@ func PauseSong(s *discordgo.Session, m *discordgo.MessageCreate) {
 	state.PauseChMutex.Unlock()
 
 	if currentState {
-		s.ChannelMessageSend(m.ChannelID, "Resumed playback.")
+		ctx.Reply("Resumed playback.")
 	} else {
-		s.ChannelMessageSend(m.ChannelID, "Paused playback.")
+		ctx.Reply("Paused playback.")
 	}
 }

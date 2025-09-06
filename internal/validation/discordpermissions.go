@@ -1,16 +1,20 @@
 package validation
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"discord-go-music-bot/internal/state"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 // Given a permission, checks if the user has that permission in the guild
-func HasPermission(s *discordgo.Session, m *discordgo.MessageCreate, permission_requested int64) bool {
+func HasPermission(ctx state.Context, permission_requested int64) bool {
 
-	member, err := s.GuildMember(m.GuildID, m.Author.ID)
+	member, err := ctx.GetSession().GuildMember(ctx.GetGuildID(), ctx.GetUser().ID)
 	if err != nil {
 		return false
 	}
 	for _, role := range member.Roles {
-		roleData, err := s.State.Role(m.GuildID, role)
+		roleData, err := ctx.GetSession().State.Role(ctx.GetGuildID(), role)
 		if err != nil {
 			continue
 		}
@@ -23,12 +27,12 @@ func HasPermission(s *discordgo.Session, m *discordgo.MessageCreate, permission_
 		}
 	}
 
-	guild, err := s.State.Guild(m.GuildID)
+	guild, err := ctx.GetSession().State.Guild(ctx.GetGuildID())
 	if err != nil {
 		return false
 	}
 
-	if guild.OwnerID == m.Author.ID {
+	if guild.OwnerID == ctx.GetUser().ID {
 		return true
 	}
 

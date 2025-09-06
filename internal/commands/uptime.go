@@ -10,9 +10,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func Uptime(s *discordgo.Session, m *discordgo.MessageCreate) {
-	if !validation.HasPermission(s, m, discordgo.PermissionAdministrator) {
-		s.ChannelMessageSend(m.ChannelID, "You do not have permission to use this command.")
+func Uptime(ctx state.Context) {
+	if !validation.HasPermission(ctx, discordgo.PermissionAdministrator) {
+		ctx.Reply("You do not have permission to use this command.")
 		return
 	}
 	timeNow := time.Now()
@@ -54,5 +54,5 @@ func Uptime(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	}
 
-	s.ChannelMessageSend(m.ChannelID, "Uptime: "+uptimeMessage.String())
+	ctx.Reply("Uptime: " + uptimeMessage.String())
 }

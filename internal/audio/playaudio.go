@@ -3,29 +3,30 @@ package audio
 import (
 	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
+	"discord-go-music-bot/internal/state"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func playAudio(s *discordgo.Session, guildID, textChannelID, url string, m *discordgo.MessageCreate, stop chan bool, pauseCh chan bool, done chan bool) {
+func playAudio(ctx state.Context, url string, stop chan bool, pauseCh chan bool, done chan bool) {
 	defer close(done) // Signal when this function exits
 
 	var vc *discordgo.VoiceConnection
 	var err error
 
-	if !discordutil.BotInChannel(s, guildID) {
-		vc, err = discordutil.JoinUserVoiceChannel(s, m)
+	if !discordutil.BotInChannel(ctx) {
+		vc, err = discordutil.JoinUserVoiceChannel(ctx)
 		if err != nil {
 			log.Println(constants.ANSIRed + "Error joining voice channel: " + err.Error() + constants.ANSIReset)
-			s.ChannelMessageSend(textChannelID, "Error joining voice channel.")
+			ctx.Reply("Error joining voice channel.")
 			return
 		}
 	} else {
-		vc, err = discordutil.GetVoiceConnection(s, guildID)
+		vc, err = discordutil.GetVoiceConnection(ctx)
 		if err != nil {
 			log.Println(constants.ANSIRed + "Error getting voice connection: " + err.Error() + constants.ANSIReset)
-			s.ChannelMessageSend(textChannelID, "Error with voice connection.")
+			ctx.Reply("Error with voice connection.")
 			return
 		}
 	}
