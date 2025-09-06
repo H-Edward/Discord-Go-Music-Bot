@@ -79,7 +79,7 @@ sudo apt install ffmpeg libopus0 libopus-dev libopusenc0 libopusfile-dev opus-to
 # and go.dev/doc/install for Go
 ```
 
-After installing these, it's a good idea to check yt-dlp is working by testing it, e.g.
+After installing these, it's a good idea to check yt-dlp is working, since it can be error prone, by testing it, e.g.
 
 ```bash
 yt-dlp https://www.youtube.com/watch?v=dQw4w9WgXcQ
@@ -144,7 +144,6 @@ Then you may run the bot again with:
 ```bash
 ./music-bot
 ```
-
 
 ### Docker
 
