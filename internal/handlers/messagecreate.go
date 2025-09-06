@@ -17,9 +17,8 @@ func HandleMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.Bot || !strings.HasPrefix(m.Content, "!") { // ignore bot messages and messages not starting with '!'
 		return
 	}
-	command := strings.Fields(m.Content)[0]
 
-	ctx := state.NewMessageContext(s, m, command)
+	ctx := state.NewMessageContext(s, m)
 
 	switch ctx.CommandName {
 	case "ping":

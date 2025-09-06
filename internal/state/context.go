@@ -113,7 +113,7 @@ func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate)
 	return ctx
 }
 
-func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate, command string) *Context {
+func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate) *Context {
 	ctx := &Context{
 		SourceType:   SourceTypeMessage,
 		Session:      s,
@@ -123,7 +123,7 @@ func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate, command
 		GuildID:      m.GuildID,
 		ArgumentsRaw: make(map[string]interface{}),
 		Arguments:    make(map[string]string),
-		CommandName:  command,
+		CommandName:  "", // to be determined
 		InteractionResponded: false, // not an interaction but keep for uniformity
 	}
 	ctx.determineCommandNameFromMessage()
