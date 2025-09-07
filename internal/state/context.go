@@ -214,6 +214,8 @@ func (ctx *Context) standardiseArguments() {
 				ctx.Arguments["level"] = ""
 			}
 
+		} else {
+			ctx.Arguments["level"] = ""
 		}
 	case "nuke": // count int (1-100)
 		if val, exists := ctx.getArgumentRaw("count"); exists {
@@ -228,6 +230,8 @@ func (ctx *Context) standardiseArguments() {
 				ctx.Arguments["count"] = ""
 			}
 
+		} else {
+			ctx.Arguments["count"] = ""
 		}
 	}
 
