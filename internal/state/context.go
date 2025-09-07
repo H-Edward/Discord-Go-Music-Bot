@@ -197,6 +197,8 @@ func (ctx *Context) standardiseArguments() {
 			} else {
 				ctx.Arguments["query"] = ""
 			}
+		} else {
+			ctx.Arguments["query"] = ""
 		}
 
 	case "volume": // level int (0-200)
