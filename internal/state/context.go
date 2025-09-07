@@ -23,7 +23,7 @@ type Context struct {
 	User                 *discordgo.User              // Caller of the command
 	GuildID              string                       // Guild ID where the command was called
 	ChannelID            string                       // Channel ID where the command was called
-	ArgumentsRaw         map[string]interface{}       // Raw arguments from the command, type depends on source
+	ArgumentsRaw         map[string]any               // Raw arguments from the command, type depends on source
 	Arguments            map[string]string            // Standardised arguments, types are consistent
 	CommandName          string                       // Name of the command being executed, used for determining argument keys
 	InteractionResponded bool                         // Whether the interaction has been responded to
@@ -75,11 +75,11 @@ func (ctx *Context) GetChannelID() string {
 	return ctx.ChannelID
 }
 
-func (ctx *Context) getArgument(key string) (interface{}, bool) {
+func (ctx *Context) getArgument(key string) (any, bool) {
 	val, exists := ctx.Arguments[key]
 	return val, exists
 }
-func (ctx *Context) getArgumentRaw(key string) (interface{}, bool) {
+func (ctx *Context) getArgumentRaw(key string) (any, bool) {
 	val, exists := ctx.ArgumentsRaw[key]
 	return val, exists
 }
@@ -115,15 +115,15 @@ func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate)
 
 func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate) *Context {
 	ctx := &Context{
-		SourceType:   SourceTypeMessage,
-		Session:      s,
-		Message:      m,
-		User:         m.Author,
-		ChannelID:    m.ChannelID,
-		GuildID:      m.GuildID,
-		ArgumentsRaw: make(map[string]any),
-		Arguments:    make(map[string]string),
-		CommandName:  "", // to be determined
+		SourceType:           SourceTypeMessage,
+		Session:              s,
+		Message:              m,
+		User:                 m.Author,
+		ChannelID:            m.ChannelID,
+		GuildID:              m.GuildID,
+		ArgumentsRaw:         make(map[string]any),
+		Arguments:            make(map[string]string),
+		CommandName:          "",    // to be determined
 		InteractionResponded: false, // not an interaction but keep for uniformity
 	}
 	ctx.determineCommandNameFromMessage()
