@@ -150,6 +150,7 @@ func (ctx *Context) determineArgumentsFromMessage() {
 	case "play":
 		// everything after !play is the url
 		if len(ctx.Message.Content) > 6 {
+			ctx.ArgumentsRaw["url"] = ctx.Message.Content[6:]
 		} else {
 			ctx.ArgumentsRaw["url"] = ""
 		}
