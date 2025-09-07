@@ -35,7 +35,7 @@ func HandleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreat
 		commands.ShowQueue(*ctx)
 	case "stop":
 		commands.StopSong(*ctx)
-	case "pause", "!resume":
+	case "pause", "resume":
 		commands.PauseSong(*ctx)
 	case "volume":
 		commands.SetVolume(*ctx)
