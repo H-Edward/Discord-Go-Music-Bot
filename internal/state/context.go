@@ -94,7 +94,7 @@ func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate)
 		User:                 i.User,
 		GuildID:              i.GuildID,
 		ChannelID:            i.ChannelID,
-		ArgumentsRaw:         make(map[string]interface{}),
+		ArgumentsRaw:         make(map[string]any),
 		Arguments:            make(map[string]string),
 		CommandName:          i.ApplicationCommandData().Name,
 		InteractionResponded: false,
@@ -121,7 +121,7 @@ func NewMessageContext(s *discordgo.Session, m *discordgo.MessageCreate) *Contex
 		User:         m.Author,
 		ChannelID:    m.ChannelID,
 		GuildID:      m.GuildID,
-		ArgumentsRaw: make(map[string]interface{}),
+		ArgumentsRaw: make(map[string]any),
 		Arguments:    make(map[string]string),
 		CommandName:  "", // to be determined
 		InteractionResponded: false, // not an interaction but keep for uniformity
