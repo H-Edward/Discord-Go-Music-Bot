@@ -75,10 +75,6 @@ func (ctx *Context) GetChannelID() string {
 	return ctx.ChannelID
 }
 
-func (ctx *Context) getArgument(key string) (any, bool) {
-	val, exists := ctx.Arguments[key]
-	return val, exists
-}
 func (ctx *Context) getArgumentRaw(key string) (any, bool) {
 	val, exists := ctx.ArgumentsRaw[key]
 	return val, exists
