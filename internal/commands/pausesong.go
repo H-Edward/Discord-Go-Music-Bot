@@ -6,6 +6,7 @@ import (
 )
 
 func PauseSong(ctx state.Context) {
+	// Regardless of pause or resume, flip the state 
 
 	// Check if the bot is in a voice channel
 	if !discordutil.BotInChannel(ctx) {
