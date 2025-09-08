@@ -84,6 +84,10 @@ func (ctx *Context) getArgumentRaw(key string) (any, bool) {
 	return val, exists
 }
 
+func (ctx *Context) GetSourceType() int {
+	return int(ctx.SourceType)
+}
+
 // Setters
 
 func NewInteractionContext(s *discordgo.Session, i *discordgo.InteractionCreate) *Context {
