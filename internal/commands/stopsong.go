@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func StopSong(ctx state.Context) {
+func StopSong(ctx *state.Context) {
 	// Get the voice connection for the guild
 	vc, err := discordutil.GetVoiceConnection(ctx)
 	if err != nil {

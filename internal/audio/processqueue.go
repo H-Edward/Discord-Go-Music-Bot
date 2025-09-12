@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func ProcessQueue(ctx state.Context) {
+func ProcessQueue(ctx *state.Context) {
 	go func() {
 		for {
 			state.QueueMutex.Lock()

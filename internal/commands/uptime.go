@@ -10,7 +10,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func Uptime(ctx state.Context) {
+func Uptime(ctx *state.Context) {
 	if !validation.HasPermission(ctx, discordgo.PermissionAdministrator) {
 		ctx.Reply("You do not have permission to use this command.")
 		return

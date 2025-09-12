@@ -7,7 +7,7 @@ import (
 )
 
 // Given a permission, checks if the user has that permission in the guild
-func HasPermission(ctx state.Context, permission_requested int64) bool {
+func HasPermission(ctx *state.Context, permission_requested int64) bool {
 
 	member, err := ctx.GetSession().GuildMember(ctx.GetGuildID(), ctx.GetUser().ID)
 	if err != nil {

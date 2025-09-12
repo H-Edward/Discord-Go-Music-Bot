@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func AddSong(ctx state.Context, search_mode bool) { // mode (false for play, true for search)
+func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, true for search)
 	var url string
 
 	if !discordutil.IsUserInVoiceChannel(ctx) {
@@ -20,7 +20,6 @@ func AddSong(ctx state.Context, search_mode bool) { // mode (false for play, tru
 
 	if search_mode {
 		var hadToSanitise bool
-
 
 		searchQuery := strings.TrimSpace(ctx.Arguments["query"])
 

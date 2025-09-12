@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func playAudio(ctx state.Context, url string, stop chan bool, pauseCh chan bool, done chan bool) {
+func playAudio(ctx *state.Context, url string, stop chan bool, pauseCh chan bool, done chan bool) {
 	defer close(done) // Signal when this function exits
 
 	var vc *discordgo.VoiceConnection

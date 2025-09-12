@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func NukeMessages(ctx state.Context) {
+func NukeMessages(ctx *state.Context) {
 	// check if the user has permission to manage messages
 	if !validation.HasPermission(ctx, discordgo.PermissionManageMessages) {
 		ctx.Reply("You do not have permission to use this command.")

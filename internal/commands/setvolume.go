@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func SetVolume(ctx state.Context) {
+func SetVolume(ctx *state.Context) {
 	volume := ctx.Arguments["level"]
 
 	if len(volume) < 1 {

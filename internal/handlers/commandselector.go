@@ -9,36 +9,36 @@ import (
 func commandSelector(ctx *state.Context) {
 	switch ctx.CommandName {
 	case "ping":
-		commands.Pong(*ctx)
+		commands.Pong(ctx)
 	case "pong":
-		commands.Ping(*ctx)
+		commands.Ping(ctx)
 	case "play":
-		commands.AddSong(*ctx, false) // false as in not a search
+		commands.AddSong(ctx, false) // false as in not a search
 	case "search":
-		commands.AddSong(*ctx, true) // true as in search for a song
+		commands.AddSong(ctx, true) // true as in search for a song
 	case "skip":
-		commands.SkipSong(*ctx)
+		commands.SkipSong(ctx)
 	case "queue":
-		commands.ShowQueue(*ctx)
+		commands.ShowQueue(ctx)
 	case "stop":
-		commands.StopSong(*ctx)
+		commands.StopSong(ctx)
 	case "pause", "resume":
-		commands.PauseSong(*ctx)
+		commands.PauseSong(ctx)
 	case "volume":
-		commands.SetVolume(*ctx)
+		commands.SetVolume(ctx)
 	case "currentvolume":
-		commands.CurrentVolume(*ctx)
+		commands.CurrentVolume(ctx)
 	case "nuke": // delete n messages
-		commands.NukeMessages(*ctx)
+		commands.NukeMessages(ctx)
 	case "uptime":
-		commands.Uptime(*ctx)
+		commands.Uptime(ctx)
 	case "version":
-		commands.Version(*ctx)
+		commands.Version(ctx)
 	case "help":
-		commands.Help(*ctx)
+		commands.Help(ctx)
 	case "oss":
-		commands.Oss(*ctx)
+		commands.Oss(ctx)
 	default:
-		commands.Unknown(*ctx)
+		commands.Unknown(ctx)
 	}
 }

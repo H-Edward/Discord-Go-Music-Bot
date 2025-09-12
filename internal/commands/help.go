@@ -4,7 +4,7 @@ import (
 	"discord-go-music-bot/internal/state"
 )
 
-func Help(ctx state.Context) {
+func Help(ctx *state.Context) {
 	prefix := "/"
 	if ctx.GetSourceType() == int(state.SourceTypeMessage) {
 		prefix = "!"

@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func Unknown(ctx state.Context) {
+func Unknown(ctx *state.Context) {
 	// Check .env for how to handle unknown commands
 	// default case is "ignore"
 

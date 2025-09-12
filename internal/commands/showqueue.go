@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func ShowQueue(ctx state.Context) {
+func ShowQueue(ctx *state.Context) {
 	state.QueueMutex.Lock()
 	defer state.QueueMutex.Unlock()
 

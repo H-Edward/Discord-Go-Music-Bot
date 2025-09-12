@@ -5,7 +5,7 @@ import (
 	"discord-go-music-bot/internal/state"
 )
 
-func SkipSong(ctx state.Context) {
+func SkipSong(ctx *state.Context) {
 	vc, err := discordutil.GetVoiceConnection(ctx)
 	if err != nil {
 		ctx.Reply("Not in a voice channel")

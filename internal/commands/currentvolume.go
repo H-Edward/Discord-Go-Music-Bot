@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func CurrentVolume(ctx state.Context) {
+func CurrentVolume(ctx *state.Context) {
 	state.VolumeMutex.Lock()
 	defer state.VolumeMutex.Unlock()
 
