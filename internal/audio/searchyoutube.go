@@ -2,9 +2,8 @@ package audio
 
 import (
 	"bytes"
-	"discord-go-music-bot/internal/constants"
+	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/validation"
-	"log"
 	"os/exec"
 	"strings"
 )
@@ -15,7 +14,7 @@ func SearchYoutube(query string) (string, bool) {
 	cmd.Stdout = &outputFromSearch
 	err := cmd.Run()
 	if err != nil {
-		log.Println(constants.ANSIRed + "Error: " + err.Error() + constants.ANSIReset)
+		logging.ErrorLog("Error: " + err.Error())
 		return "", false
 	}
 

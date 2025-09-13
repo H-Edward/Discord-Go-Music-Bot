@@ -1,11 +1,11 @@
 package audio
 
 import (
-	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
+	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
 	"fmt"
-	"log"
+	"strconv"
 	"time"
 )
 
@@ -37,7 +37,7 @@ func ProcessQueue(ctx *state.Context) {
 			songLength := len(state.Queue[ctx.GetGuildID()])
 			state.QueueMutex.Unlock()
 
-			log.Printf(constants.ANSIBlue+"Playing song, %d more in queue "+constants.ANSIReset, songLength)
+			logging.InfoLog("Playing song, " + strconv.Itoa(songLength) + " more in queue ")
 			ctx.Reply(fmt.Sprintf("Now playing: %s", currentURL))
 
 			// Create a stop channel for this song
@@ -61,7 +61,7 @@ func ProcessQueue(ctx *state.Context) {
 			go playAudio(ctx, currentURL, stop, pauseCh, done)
 			<-done
 
-			log.Println(constants.ANSIBlue + "Song finished, moving to next in queue" + constants.ANSIReset)
+			logging.InfoLog("Song finished, moving to next in queue if available.")
 
 			// Clean up pause channel
 			state.PauseChMutex.Lock()

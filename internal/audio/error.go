@@ -1,17 +1,15 @@
 package audio
 
 import (
-	"discord-go-music-bot/internal/constants"
-	"log"
+	"discord-go-music-bot/internal/logging"
 )
 
 // OnError gets called by dgvoice when an error is encountered.
 var OnError = func(str string, err error) {
-	prefix := constants.ANSIRed + "dgVoice: " + str
 
 	if err != nil {
-		log.Println(prefix + ": " + err.Error() + constants.ANSIReset + "\n")
+		logging.DgvoiceLog(str + ": " + err.Error())
 	} else {
-		log.Println(prefix + ": Error is nil" + constants.ANSIReset + "\n")
+		logging.DgvoiceLog(str)
 	}
 }

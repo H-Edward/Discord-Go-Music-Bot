@@ -1,11 +1,10 @@
 package bot
 
 import (
-	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/handlers"
+	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -17,19 +16,19 @@ import (
 func setup() { // find env, get bot token, check dependencies
 
 	if err := godotenv.Load(); err != nil {
-		log.Fatal(constants.ANSIRed + "Error loading .env file" + constants.ANSIReset)
+		logging.FatalLog("Error loading .env file")
 	}
 	state.Token = os.Getenv("DISCORD_BOT_TOKEN")
 	if state.Token == "" {
-		log.Fatal(constants.ANSIRed + "Token not found - check .env file" + constants.ANSIReset)
+		logging.FatalLog("Token not found - check .env file")
 	}
 
 	if _, err := exec.LookPath("yt-dlp"); err != nil {
-		log.Fatal(constants.ANSIRed + "yt-dlp not found. Please install it with: pip install yt-dlp" + constants.ANSIReset)
+		logging.FatalLog("yt-dlp not found. Please install it with: pip install yt-dlp")
 	}
 
 	if _, err := exec.LookPath("ffmpeg"); err != nil {
-		log.Fatal(constants.ANSIRed + "ffmpeg not found. Please install it with your package manager" + constants.ANSIReset)
+		logging.FatalLog("ffmpeg not found. Please install it with your package manager")
 	}
 
 	// Parse disabled commands from .env
@@ -46,7 +45,7 @@ func Run() {
 	setup()
 	dg, err := discordgo.New("Bot " + state.Token)
 	if err != nil {
-		log.Fatal(constants.ANSIRed + "Error creating Discord session: " + err.Error() + constants.ANSIReset)
+		logging.FatalLog("Error creating Discord session: " + err.Error())
 	}
 
 	dg.AddHandler(handlers.HandleMessageCreate)
@@ -57,10 +56,10 @@ func Run() {
 	discordutil.SetupSlashCommands(dg)
 
 	if err != nil {
-		log.Fatal(constants.ANSIRed + "Error opening connection: " + err.Error() + constants.ANSIReset)
+		logging.FatalLog("Error opening connection: " + err.Error())
 	}
 	defer dg.Close()
-	log.Println(constants.ANSIBlue + "Version: " + constants.ANSIBold + state.GoSourceHash + constants.ANSIReset)
-	log.Println(constants.ANSIBlue + "Bot is running. Press CTRL-C to exit." + constants.ANSIReset)
+	logging.InfoLog("Version: " + state.GoSourceHash)
+	logging.InfoLog("Bot is running. Press CTRL-C to exit.")
 	select {} // block forever
 }

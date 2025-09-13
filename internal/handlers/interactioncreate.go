@@ -1,9 +1,8 @@
 package handlers
 
 import (
-	"discord-go-music-bot/internal/constants"
+	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
-	"log"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -16,7 +15,6 @@ func HandleInteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreat
 
 	ctx := state.NewInteractionContext(s, i)
 
-	log.Println(constants.ANSICyan + ctx.User.Username + ": " + ctx.CommandName + ctx.ArgumentstoString() + constants.ANSIReset)
-
+	logging.InteractionCreateLog(ctx.User.Username, ctx.CommandName, ctx.ArgumentstoString())
 	commandSelector(ctx)
 }

@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
+	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
-	"log"
 	"time"
 )
 
@@ -42,7 +41,7 @@ func StopSong(ctx *state.Context) {
 		vc.Speaking(false)
 		err = vc.Disconnect()
 		if err != nil {
-			log.Println(constants.ANSIRed + "Error disconnecting from voice channel: " + err.Error() + constants.ANSIReset)
+			logging.ErrorLog("Error disconnecting from voice channel: " + err.Error())
 		}
 	}()
 
