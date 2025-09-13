@@ -15,7 +15,10 @@ There is a small amount of configuration needed to get it up and running, and on
       - [Updating with Native](#updating-with-native)
     - [Docker](#docker)
       - [Updating with Docker](#updating-with-docker)
-  - [Environment Variables](#environment-variables)
+  - [Configuration and Setup](#configuration-and-setup)
+    - [DISCORD\_BOT\_TOKEN](#discord_bot_token)
+    - [UNKNOWN\_COMMANDS](#unknown_commands)
+    - [DISABLED\_COMMANDS](#disabled_commands)
   - [Usage within Discord](#usage-within-discord)
   - [Technical Details](#technical-details)
   - [Contributing](#contributing)
@@ -212,21 +215,35 @@ git pull origin main
 make docker-refresh-build
 ```
 
-## Environment Variables
+## Configuration and Setup
 
 **You can set the following environment variables in the `.env` file to configure the bot:**
 
-DISCORD_BOT_TOKEN
+### DISCORD_BOT_TOKEN
 
 Your Discord bot token (required)
 
-UNKNOWN_COMMANDS
+### UNKNOWN_COMMANDS
+
+What the bot should do when faced with an unknown command. Without an explicit setting, the default is `ignore`.
+
+Options are:
 
 Ignore - If set to `ignore`, the bot will treat the command as if its just another message
 
 Error - If set to `error`, the bot will respond with an error message if an unknown command is used
 
 Help - If set to `help`, the bot will respond with a help message if an unknown command is used (same as `!help` command)
+
+### DISABLED_COMMANDS
+
+A list of commands that should be disabled and not respond to user input.
+
+This is a comma-separated list of command names, e.g.
+
+```txt
+DISABLED_COMMANDS=nuke,oss
+```
 
 ## Usage within Discord
 
