@@ -7,6 +7,11 @@ import (
 
 // Both handlers can use this to forward to the correct command
 func commandSelector(ctx *state.Context) {
+	if state.DisabledCommands[ctx.CommandName] {
+		ctx.Reply("This command is disabled by the bot host.")
+		return
+	}
+
 	switch ctx.CommandName {
 	case "ping":
 		commands.Pong(ctx)

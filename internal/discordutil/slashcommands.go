@@ -2,6 +2,7 @@ package discordutil
 
 import (
 	"discord-go-music-bot/internal/constants"
+	"discord-go-music-bot/internal/state"
 	"log"
 
 	"github.com/bwmarrin/discordgo"
@@ -75,6 +76,10 @@ func SetupSlashCommands(s *discordgo.Session) {
 	}
 
 	for _, cmd := range commands {
+		if state.DisabledCommands[cmd.Name] {
+			log.Printf(constants.ANSIYellow+"Skipping disabled command: %s"+constants.ANSIReset, cmd.Name)
+			continue
+		}
 		found := false
 		for _, existingCmd := range existingCommands {
 			if cmd.Name == existingCmd.Name {

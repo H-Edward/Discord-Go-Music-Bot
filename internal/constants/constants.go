@@ -15,8 +15,9 @@ const (
 	// ANSI color codes for terminal output
 	ANSIBold   = "\033[1m"
 	ANSIBlue   = "\033[34m"
-	ANSIYellow = "\033[33m"
 	ANSICyan   = "\033[36m"
+	ANSIYellow = "\033[33m"
+	ANSIGreen  = "\033[32m"
 	ANSIRed    = "\033[31m"
 	ANSIReset  = "\033[0m"
 )

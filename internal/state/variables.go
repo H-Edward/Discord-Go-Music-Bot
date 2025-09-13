@@ -12,7 +12,10 @@ func init() {
 }
 
 var (
+	// from .env
 	Token        string
+	DisabledCommands = make(map[string]bool) // Set of disabled commands
+
 	Queue        = make(map[string][]string) // Guild ID -> Queue of URLs
 	QueueMutex   sync.Mutex
 	Playing      = make(map[string]bool)
@@ -29,5 +32,5 @@ var (
 
 	StartTime time.Time // Time when the bot started
 
-	GoSourceHash string // short hash of all go source files for !version
+	GoSourceHash string // short hash of all go source files for version command
 )

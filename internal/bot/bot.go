@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -31,6 +32,14 @@ func setup() { // find env, get bot token, check dependencies
 		log.Fatal(constants.ANSIRed + "ffmpeg not found. Please install it with your package manager" + constants.ANSIReset)
 	}
 
+	// Parse disabled commands from .env
+	disabled := os.Getenv("DISABLED_COMMANDS")
+	for _, cmd := range strings.Split(disabled, ",") {
+		cmd = strings.TrimSpace(cmd)
+		if cmd != "" {
+			state.DisabledCommands[cmd] = true
+		}
+	}
 }
 
 func Run() {
@@ -51,7 +60,7 @@ func Run() {
 		log.Fatal(constants.ANSIRed + "Error opening connection: " + err.Error() + constants.ANSIReset)
 	}
 	defer dg.Close()
-	log.Println("Version: " + constants.ANSIBold + state.GoSourceHash + constants.ANSIReset)
+	log.Println(constants.ANSIBlue + "Version: " + constants.ANSIBold + state.GoSourceHash + constants.ANSIReset)
 	log.Println(constants.ANSIBlue + "Bot is running. Press CTRL-C to exit." + constants.ANSIReset)
 	select {} // block forever
 }
