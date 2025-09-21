@@ -143,9 +143,6 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 	// Track pause state
 	isPaused := false
 
-	audiobuf := make([]int16, constants.FrameSize*constants.Channels)
-
-
 	// Stream audio from ffmpeg
 	for {
 		// Check pause channel
@@ -162,6 +159,8 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 			time.Sleep(100 * time.Millisecond)
 			continue
 		}
+		audiobuf := make([]int16, constants.FrameSize*constants.Channels)
+
 
 		// Process audio normally
 		err = binary.Read(ffmpegbuf, binary.LittleEndian, &audiobuf)
