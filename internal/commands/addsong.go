@@ -18,6 +18,11 @@ func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, tr
 	}
 
 	if search_mode {
+		if ctx.SourceType == state.SourceTypeInteraction {
+			// To avoid the discord timeout for interactions
+			ctx.Reply("Searching...")
+		}
+
 		var hadToSanitise bool
 
 		searchQuery := strings.TrimSpace(ctx.Arguments["query"])
