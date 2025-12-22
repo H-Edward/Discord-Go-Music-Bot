@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
@@ -11,7 +12,7 @@ func StopSong(ctx *state.Context) {
 	// Get the voice connection for the guild
 	vc, err := discordutil.GetVoiceConnection(ctx)
 	if err != nil {
-		ctx.Reply("Not in a voice channel")
+		ctx.Reply(constants.EmojiWarning + " Not in a voice channel")
 		return
 	}
 
@@ -46,5 +47,5 @@ func StopSong(ctx *state.Context) {
 	}()
 
 	// Notify the user
-	ctx.Reply("Stopped playback and cleared the queue.")
+	ctx.Reply(constants.EmojiStop + " Stopped playback and cleared the queue.")
 }

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"fmt"
 	"strconv"
@@ -16,7 +17,7 @@ func SetVolume(ctx *state.Context) {
 
 	newVolume, err := strconv.ParseFloat(volume, 64)
 	if err != nil || newVolume < 0.0 || newVolume > 200.0 {
-		ctx.Reply("Invalid volume value. Please specify a number between 0 and 200.")
+		ctx.Reply(constants.EmojiWarning + " Invalid volume value. Please specify a number between 0 and 200.")
 		return
 	}
 	var preservedVolume float64 = newVolume
@@ -30,5 +31,5 @@ func SetVolume(ctx *state.Context) {
 	state.Volume[ctx.GetGuildID()] = newVolume
 	state.VolumeMutex.Unlock()
 
-	ctx.Reply(fmt.Sprintf("Volume set to %.1f%%", preservedVolume))
+	ctx.Reply(fmt.Sprintf(constants.EmojiVolume + " Volume set to %.1f%%", preservedVolume))
 }

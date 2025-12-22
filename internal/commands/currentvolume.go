@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"fmt"
 )
@@ -16,5 +17,5 @@ func CurrentVolume(ctx *state.Context) {
 	state.VolumeMutex.Unlock()
 	// Convert to percentage for display
 	currentVolume = currentVolume * 100.0 // Convert factor back to percentage
-	ctx.Reply(fmt.Sprintf("Current volume is %.1f%%", currentVolume))
+	ctx.Reply(fmt.Sprintf(constants.EmojiVolume + " Current volume is %.1f%%", currentVolume))
 }

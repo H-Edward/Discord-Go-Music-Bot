@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"discord-go-music-bot/internal/validation"
 
@@ -9,8 +10,8 @@ import (
 
 func Version(ctx *state.Context) {
 	if !validation.HasPermission(ctx, discordgo.PermissionAdministrator) {
-		ctx.Reply("You do not have permission to use this command.")
+		ctx.Reply(constants.EmojiWarning + " You do not have permission to use this command.")
 		return
 	}
-	ctx.Reply("Version: " + state.GoSourceHash)
+	ctx.Reply(constants.EmojiInfo + " Version: " + state.GoSourceHash)
 }

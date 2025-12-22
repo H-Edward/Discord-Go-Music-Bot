@@ -1,6 +1,7 @@
 package audio
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
@@ -18,14 +19,14 @@ func playAudio(ctx *state.Context, url string, stop chan bool, pauseCh chan bool
 		vc, err = discordutil.JoinUserVoiceChannel(ctx)
 		if err != nil {
 			logging.ErrorLog("Error joining voice channel: " + err.Error())
-			ctx.Reply("Error joining voice channel.")
+			ctx.Reply(constants.EmojiWarning + " Error joining voice channel.")
 			return
 		}
 	} else {
 		vc, err = discordutil.GetVoiceConnection(ctx)
 		if err != nil {
 			logging.ErrorLog("Error getting voice connection: " + err.Error())
-			ctx.Reply("Error with voice connection.")
+			ctx.Reply(constants.EmojiWarning + " Error with voice connection.")
 			return
 		}
 	}

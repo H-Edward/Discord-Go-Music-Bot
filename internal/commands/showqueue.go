@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"fmt"
 	"strings"
@@ -11,7 +12,7 @@ func ShowQueue(ctx *state.Context) {
 	defer state.QueueMutex.Unlock()
 
 	if len(state.Queue[ctx.GetGuildID()]) == 0 {
-		ctx.Reply("Queue is empty.")
+		ctx.Reply(constants.EmojiQueue + " Queue is empty.")
 		return
 	}
 
@@ -21,5 +22,5 @@ func ShowQueue(ctx *state.Context) {
 		formattedQueue = append(formattedQueue, fmt.Sprintf("[%d] %s", i+1, song))
 	}
 
-	ctx.Reply("Current queue:\n" + strings.Join(formattedQueue, "\n"))
+	ctx.Reply(constants.EmojiQueue + " Current queue:\n" + strings.Join(formattedQueue, "\n"))
 }

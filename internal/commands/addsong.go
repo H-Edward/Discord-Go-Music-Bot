@@ -2,6 +2,7 @@ package commands
 
 import (
 	"discord-go-music-bot/internal/audio"
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
@@ -13,14 +14,14 @@ func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, tr
 	var url string
 
 	if !discordutil.IsUserInVoiceChannel(ctx) {
-		ctx.Reply("You must be in a voice channel to use this command.")
+		ctx.Reply(constants.EmojiWarning + " You must be in a voice channel to use this command.")
 		return
 	}
 
 	if search_mode {
 		if ctx.SourceType == state.SourceTypeInteraction {
 			// To avoid the discord timeout for interactions
-			ctx.Reply("Searching...")
+			ctx.Reply(constants.EmojiSearch + " Searching...")
 		}
 
 		var hadToSanitise bool
@@ -32,7 +33,7 @@ func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, tr
 			searchQuery, searchQuerySafeToUse = validation.SanitiseSearchQuery(searchQuery)
 			hadToSanitise = true
 			if !searchQuerySafeToUse {
-				ctx.Reply("Invalid search query")
+				ctx.Reply(constants.EmojiWarning + " Invalid search query")
 				return
 			}
 		}
@@ -42,25 +43,25 @@ func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, tr
 
 		if !found_result {
 			logging.ErrorLog("No results found for: " + searchQuery)
-			ctx.Reply("No results found for: " + searchQuery)
+			ctx.Reply(constants.EmojiWarning + " No results found for: " + searchQuery)
 			return
 		}
 
 		if hadToSanitise {
-			ctx.Reply("Found: " + url + " using: " + searchQuery)
+			ctx.Reply(constants.EmojiInfo + " Found: " + url + " using: " + searchQuery)
 		} else {
-			ctx.Reply("Found: " + url)
+			ctx.Reply(constants.EmojiInfo + " Found: " + url)
 		}
 	} else {
 		if len(ctx.Arguments["url"]) < 6 {
-			ctx.Reply("Invalid URL")
+			ctx.Reply(constants.EmojiWarning + " Invalid URL")
 			return
 		}
 
 		url = strings.TrimSpace(ctx.Arguments["url"])
 
 		if !validation.IsValidURL(url) {
-			ctx.Reply("Invalid URL")
+			ctx.Reply(constants.EmojiWarning + " Invalid URL")
 			return
 		}
 
@@ -73,7 +74,7 @@ func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, tr
 	isAlreadyPlaying := state.Playing[ctx.GetGuildID()]
 	state.PlayingMutex.Unlock()
 
-	ctx.Reply("Added to queue.")
+	ctx.Reply(constants.EmojiSuccess + " Added to queue.")
 
 	if !isAlreadyPlaying {
 		// Start processing the queue if the bot is idle

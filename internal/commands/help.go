@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 )
 
@@ -10,7 +11,7 @@ func Help(ctx *state.Context) {
 		prefix = "!"
 	}
 
-	helpMessage := "Commands:\n" +
+	helpMessage := constants.EmojiInfo + " Commands:\n" +
 		prefix + "ping - Responds with Pong\n" +
 		prefix + "pong - Responds with Ping\n" +
 		prefix + "play <url> - Plays a song from the given URL\n" +

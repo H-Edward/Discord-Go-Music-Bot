@@ -1,6 +1,7 @@
 package audio
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/logging"
 	"discord-go-music-bot/internal/state"
@@ -38,7 +39,7 @@ func ProcessQueue(ctx *state.Context) {
 			state.QueueMutex.Unlock()
 
 			logging.InfoLog("Playing song, " + strconv.Itoa(songLength) + " more in queue ")
-			ctx.Reply(fmt.Sprintf("Now playing: %s", currentURL))
+			ctx.Reply(fmt.Sprintf(constants.EmojiMusic+" Now playing: %s", currentURL))
 
 			// Create a stop channel for this song
 			state.StopMutex.Lock()

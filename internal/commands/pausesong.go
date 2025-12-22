@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/state"
 )
@@ -10,7 +11,7 @@ func PauseSong(ctx *state.Context) {
 
 	// Check if the bot is in a voice channel
 	if !discordutil.BotInChannel(ctx) {
-		ctx.Reply("Not in a voice channel.")
+		ctx.Reply(constants.EmojiWarning + " Not in a voice channel.")
 		return
 	}
 
@@ -31,8 +32,8 @@ func PauseSong(ctx *state.Context) {
 	state.PauseChMutex.Unlock()
 
 	if currentState {
-		ctx.Reply("Resumed playback.")
+		ctx.Reply(constants.EmojiPlay + " Resumed playback.")
 	} else {
-		ctx.Reply("Paused playback.")
+		ctx.Reply(constants.EmojiPause + " Paused playback.")
 	}
 }

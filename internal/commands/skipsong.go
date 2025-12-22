@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/discordutil"
 	"discord-go-music-bot/internal/state"
 )
@@ -8,7 +9,7 @@ import (
 func SkipSong(ctx *state.Context) {
 	vc, err := discordutil.GetVoiceConnection(ctx)
 	if err != nil {
-		ctx.Reply("Not in a voice channel")
+		ctx.Reply(constants.EmojiWarning + " Not in a voice channel")
 		return
 	}
 
@@ -22,7 +23,7 @@ func SkipSong(ctx *state.Context) {
 
 	vc.Speaking(false)
 
-	ctx.Reply("Skipping current song")
+	ctx.Reply(constants.EmojiSkip + " Skipping current song")
 
 	// The song will stop, and the queue processor will automatically move to the next song
 	// We don't need to start a new queue processor

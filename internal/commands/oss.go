@@ -1,10 +1,13 @@
 package commands
 
-import "discord-go-music-bot/internal/state"
+import (
+	"discord-go-music-bot/internal/constants"
+	"discord-go-music-bot/internal/state"
+)
 
 func Oss(ctx *state.Context) {
 	repoURL := "https://github.com/H-Edward/Discord-Go-Music-Bot"
 
-	ctx.Reply("This bot is open source and is available at " + repoURL)
+	ctx.Reply(constants.EmojiInfo + " This bot is open source and is available at " + repoURL)
 
 }

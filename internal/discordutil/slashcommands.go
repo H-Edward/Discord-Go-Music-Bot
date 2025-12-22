@@ -13,9 +13,9 @@ func SetupSlashCommands(s *discordgo.Session) {
 	var theNumberOneAsFloat float64 = 1.0
 
 	commands := []*discordgo.ApplicationCommand{
-		{Name: "ping", Description: "Replies with Pong"},
-		{Name: "pong", Description: "Replies with Ping"},
-		{Name: "play", Description: "Play a Youtube URL",
+		{Name: "ping", Description: constants.EmojiPing + " Replies with Pong"},
+		{Name: "pong", Description: constants.EmojiPing + " Replies with Ping"},
+		{Name: "play", Description: constants.EmojiPlay + " Play a Youtube URL",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
@@ -25,7 +25,7 @@ func SetupSlashCommands(s *discordgo.Session) {
 				},
 			},
 		},
-		{Name: "search", Description: "Search for a song to play",
+		{Name: "search", Description: constants.EmojiSearch + " Search for a song to play",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
@@ -35,12 +35,12 @@ func SetupSlashCommands(s *discordgo.Session) {
 				},
 			},
 		},
-		{Name: "skip", Description: "Skip the current song"},
-		{Name: "queue", Description: "Show the current queue"},
-		{Name: "stop", Description: "Stop playing and clear the queue"},
-		{Name: "pause", Description: "Pause the current song"},
-		{Name: "resume", Description: "Resume the current song"},
-		{Name: "volume", Description: "Set the volume (0-200)",
+		{Name: "skip", Description: constants.EmojiSkip + " Skip the current song"},
+		{Name: "queue", Description: constants.EmojiQueue + " Show the current queue"},
+		{Name: "stop", Description: constants.EmojiStop + " Stop playing and clear the queue"},
+		{Name: "pause", Description: constants.EmojiPause + " Pause the current song"},
+		{Name: "resume", Description: constants.EmojiPlay + " Resume the current song"},
+		{Name: "volume", Description: constants.EmojiVolume + " Set the volume (0-200)",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionInteger,
@@ -50,8 +50,8 @@ func SetupSlashCommands(s *discordgo.Session) {
 				},
 			},
 		},
-		{Name: "currentvolume", Description: "Show the current volume"},
-		{Name: "nuke", Description: "Delete a number of messages",
+		{Name: "currentvolume", Description: constants.EmojiVolume + " Show the current volume"},
+		{Name: "nuke", Description: constants.EmojiNuke + " Delete a number of messages",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionInteger,
@@ -63,10 +63,10 @@ func SetupSlashCommands(s *discordgo.Session) {
 				},
 			},
 		},
-		{Name: "uptime", Description: "Show the bot's uptime"},
-		{Name: "version", Description: "Show the bot's version"},
-		{Name: "help", Description: "Show help information"},
-		{Name: "oss", Description: "Show the bot's open source information"},
+		{Name: "uptime", Description: constants.EmojiUptime + " Show the bot's uptime"},
+		{Name: "version", Description: constants.EmojiInfo + " Show the bot's version"},
+		{Name: "help", Description: constants.EmojiInfo + " Show help information"},
+		{Name: "oss", Description: constants.EmojiInfo + " Show the bot's open source information"},
 	}
 
 	// Since registering commands takes a bit of time, only register them if they aren't present already

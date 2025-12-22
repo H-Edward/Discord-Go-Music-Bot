@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"discord-go-music-bot/internal/constants"
 	"discord-go-music-bot/internal/state"
 	"discord-go-music-bot/internal/validation"
 	"strconv"
@@ -12,7 +13,7 @@ import (
 
 func Uptime(ctx *state.Context) {
 	if !validation.HasPermission(ctx, discordgo.PermissionAdministrator) {
-		ctx.Reply("You do not have permission to use this command.")
+		ctx.Reply(constants.EmojiWarning + " You do not have permission to use this command.")
 		return
 	}
 	timeNow := time.Now()
@@ -54,5 +55,5 @@ func Uptime(ctx *state.Context) {
 		}
 	}
 
-	ctx.Reply("Uptime: " + uptimeMessage.String())
+	ctx.Reply(constants.EmojiUptime + " Uptime: " + uptimeMessage.String())
 }

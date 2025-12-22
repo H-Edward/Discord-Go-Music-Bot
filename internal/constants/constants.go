@@ -20,4 +20,21 @@ const (
 	ANSIGreen  = "\033[32m"
 	ANSIRed    = "\033[31m"
 	ANSIReset  = "\033[0m"
+
+	// Emojis
+	EmojiPlay    = "▶️"
+	EmojiPause   = "⏸️"
+	EmojiStop    = "⏹️"
+	EmojiSkip    = "⏭️"
+	EmojiSearch  = "🔍"
+	EmojiQueue   = "📜"
+	EmojiVolume  = "🔊"
+	EmojiSuccess = "✅"
+	EmojiError   = "❌"
+	EmojiInfo    = "ℹ️"
+	EmojiWarning = "⚠️"
+	EmojiPing    = "🏓"
+	EmojiUptime  = "⏱️"
+	EmojiMusic  = "🎵"
+	EmojiNuke   = "💣"
 )
