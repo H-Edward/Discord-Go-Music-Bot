@@ -24,7 +24,11 @@ var (
 	PauseMutex   sync.Mutex
 	Volume       = make(map[string]float64) // Guild ID -> Volume
 	VolumeMutex  sync.Mutex
-	OpusEncoder  *gopus.Encoder
+
+	// Replace single global encoder with per-guild encoders to avoid races
+	OpusEncoders     = make(map[string]*gopus.Encoder) // GuildID -> *gopus.Encoder
+	OpusEncoderMutex sync.Mutex
+
 	StopChannels = make(map[string]chan bool)
 	StopMutex    sync.Mutex
 	PauseChs     = make(map[string]chan bool) // Map of guild ID to pause channels

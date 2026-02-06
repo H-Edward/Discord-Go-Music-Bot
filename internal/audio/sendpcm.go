@@ -17,12 +17,28 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 
 	var err error
 
-	state.OpusEncoder, err = gopus.NewEncoder(constants.FrameRate, constants.Channels, gopus.Audio)
+	// Create or retrieve a per-guild Opus encoder to avoid using a single global encoder.
+	guildID := v.GuildID
 
-	if err != nil {
-		OnError("NewEncoder Error", err)
-		return
+	state.OpusEncoderMutex.Lock()
+	enc, exists := state.OpusEncoders[guildID]
+	if !exists {
+		enc, err = gopus.NewEncoder(constants.FrameRate, constants.Channels, gopus.Audio)
+		if err != nil {
+			state.OpusEncoderMutex.Unlock()
+			OnError("NewEncoder Error", err)
+			return
+		}
+		state.OpusEncoders[guildID] = enc
 	}
+	state.OpusEncoderMutex.Unlock()
+
+	// Clean up encoder when finished
+	defer func() {
+		state.OpusEncoderMutex.Lock()
+		delete(state.OpusEncoders, guildID)
+		state.OpusEncoderMutex.Unlock()
+	}()
 
 	for {
 
@@ -32,8 +48,8 @@ func SendPCM(v *discordgo.VoiceConnection, pcm <-chan []int16) {
 			return
 		}
 
-		// try encoding pcm frame with Opus
-		opus, err := state.OpusEncoder.Encode(recv, constants.FrameSize, constants.MaxBytes)
+		// try encoding pcm frame with Opus using the per-guild encoder
+		opus, err := enc.Encode(recv, constants.FrameSize, constants.MaxBytes)
 		if err != nil {
 			OnError("Encoding Error", err)
 			return
