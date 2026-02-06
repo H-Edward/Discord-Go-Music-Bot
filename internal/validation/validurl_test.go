@@ -11,7 +11,10 @@ func TestIsValidURL(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected bool
-	}{
+	}{	
+		// Test link, expected validity
+
+		
 		{"https://www.youtube.com/watch?v=dQw4w9WgXcQ", true},
 		{"http://youtu.be/dQw4w9WgXcQ", true},
 		{"invalid-url", false},

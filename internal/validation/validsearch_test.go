@@ -58,6 +58,7 @@ func TestSanitiseSearchQuery(t *testing.T) {
 		expectedOutput string
 		expectedValid  bool
 	}{
+		// Test case, expected output, expected validity
 		{"valid search query", "valid search query", true},
 		{"another valid query", "another valid query", true},
 		{"", "", false},  // empty query
