@@ -3,9 +3,11 @@ package audio
 import (
 	"bufio"
 	"encoding/binary"
+	"errors"
 	"io"
 	"os/exec"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -81,7 +83,13 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 	go func() {
 		_, err := io.Copy(ffmpegIn, ytDlpOut)
 		if err != nil {
-			OnError("Error copying yt-dlp output to ffmpeg input", err)
+			// Ignore benign broken pipe / closed pipe errors that occur
+			// when ffmpeg exits before yt-dlp finishes writing.
+			if errors.Is(err, syscall.EPIPE) || err == io.ErrClosedPipe {
+				// expected, do not log
+			} else {
+				OnError("Error copying yt-dlp output to ffmpeg input", err)
+			}
 		}
 		ffmpegIn.Close() // Important: close the pipe when done
 	}()
@@ -160,7 +168,6 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 			continue
 		}
 		audiobuf := make([]int16, constants.FrameSize*constants.Channels)
-
 
 		// Process audio normally
 		err = binary.Read(ffmpegbuf, binary.LittleEndian, &audiobuf)
