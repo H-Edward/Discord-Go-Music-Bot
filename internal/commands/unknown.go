@@ -9,12 +9,18 @@ func Unknown(ctx *state.Context) {
 	// Check .env for how to handle unknown commands
 	// default case is "ignore"
 
+	prefix := "/"
+	if ctx.GetSourceType() == int(state.SourceTypeMessage) {
+		prefix = "!"
+	}
+
+
 	unknown_commands := os.Getenv("UNKNOWN_COMMANDS")
 	switch unknown_commands {
 	case "help":
 		Help(ctx)
 	case "error":
-		ctx.Reply("Unknown command. Type /help for a list of commands.")
+		ctx.Reply("Unknown command. Type " + prefix + "help for a list of commands.")
 	default:
 		return
 	}
