@@ -1,5 +1,7 @@
 # Discord-Go-Music-Bot
 
+![CI](https://github.com/H-Edward/Discord-Go-Music-Bot/actions/workflows/pipeline.yml/badge.svg)
+
 This project is a simple-to-use Discord bot you can deploy almost anywhere to play music and audio within Discord servers.
 
 There is a small amount of configuration needed to get it up and running, and once set up, there is little maintenance required to keep it operational.
