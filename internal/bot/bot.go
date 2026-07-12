@@ -16,7 +16,7 @@ import (
 func setup() { // find env, get bot token, check dependencies
 
 	if err := godotenv.Load(); err != nil {
-		logging.FatalLog("Error loading .env file")
+		logging.ErrorLog("Error loading .env file")
 	}
 	state.Token = os.Getenv("DISCORD_BOT_TOKEN")
 	if state.Token == "" {
