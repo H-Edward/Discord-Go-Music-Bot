@@ -1,0 +1,25 @@
+services:
+  music-bot:
+    build: .
+    container_name: music-bot
+    restart: unless-stopped
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          cpus: '3'
+          memory: 1G
+          pids: 40
+    user: "1000:1000"
+    volumes:
+      - ./config:/app/config:ro
+    networks:
+      - musicbot-net
+
+networks:
+  musicbot-net:
+    driver: bridge

@@ -16,7 +16,6 @@ There is a small amount of configuration needed to get it up and running, and on
     - [Native](#native)
       - [Updating with Native](#updating-with-native)
     - [Docker](#docker)
-      - [Updating with Docker](#updating-with-docker)
   - [Configuration and Setup](#configuration-and-setup)
     - [DISCORD\_BOT\_TOKEN](#discord_bot_token)
     - [UNKNOWN\_COMMANDS](#unknown_commands)
@@ -152,7 +151,7 @@ Then you may run the bot again with:
 
 ### Docker
 
-First, you must have Docker installed on your system. You can find instructions for installing Docker at https://docs.docker.com/get-docker/.
+First, you must have Docker installed on your system. You can find instructions for installing Docker at https://docs.docker.com/get-docker/ as well as Docker Compose at https://docs.docker.com/compose/install/.
 
 Then you must clone the repository and change into the directory:
 
@@ -177,44 +176,10 @@ You will now see
 
 Paste in your token after the `=` sign and save the file.
 
-Then to build the bot in Docker:
+Then to build/run the bot in Docker:
 
 ```bash
-make docker-network-create
-make docker-build
-```
-
-and to deploy the bot, you can run:
-
-```bash
-make docker-run
-## This command has additional set options for security and to prevent resource hogging
-```
-
-_If you would like to use Docker but are unfamiliar, the `Makefile` has some additional commands to help manage the bot._
-
-#### Updating with Docker
-
-If you want to update the bot to the latest version, you can do so by running the following commands:
-
-```bash
-make docker-stop
-make docker-rm 
-git pull origin main
-make docker-build
-```
-
-Then you may run the bot again with:
-
-```bash
-make docker-run
-```
-
-Alternatively,
-
-```bash
-git pull origin main
-make docker-refresh-build
+make up
 ```
 
 ## Configuration and Setup
