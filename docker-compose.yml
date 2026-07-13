@@ -4,6 +4,8 @@ services:
     container_name: music-bot
     restart: unless-stopped
     read_only: true
+    env_file:
+      - .env
     cap_drop:
       - ALL
     security_opt:
