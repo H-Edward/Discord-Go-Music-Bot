@@ -4,8 +4,10 @@ services:
     container_name: music-bot
     restart: unless-stopped
     read_only: true
-    env_file:
-      - .env.docker
+    environment:
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+      UNKNOWN_COMMANDS: ${UNKNOWN_COMMANDS}
+      DISABLED_COMMANDS: ${DISABLED_COMMANDS}
     cap_drop:
       - ALL
     security_opt:
