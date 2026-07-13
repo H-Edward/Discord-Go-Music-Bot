@@ -13,8 +13,6 @@ RUN apt-get update && \
 
 COPY . .
 
-RUN if [ ! -f .env ]; then touch .env; fi
-
 RUN go mod download
 
 RUN make build
