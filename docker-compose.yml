@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     read_only: true
     env_file:
-      - .env
+      - .env.docker
     cap_drop:
       - ALL
     security_opt:
