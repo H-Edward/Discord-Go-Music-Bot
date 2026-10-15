@@ -13,17 +13,19 @@ func init() {
 
 var (
 	// from .env
-	Token        string
+	Token            string
 	DisabledCommands = make(map[string]bool) // Set of disabled commands
 
-	Queue        = make(map[string][]string) // Guild ID -> Queue of URLs
-	QueueMutex   sync.Mutex
-	Playing      = make(map[string]bool)
-	PlayingMutex sync.Mutex
-	Paused       = make(map[string]bool) // Guild ID -> Pause state
-	PauseMutex   sync.Mutex
-	Volume       = make(map[string]float64) // Guild ID -> Volume
-	VolumeMutex  sync.Mutex
+	Queue                = make(map[string][]string) // Guild ID -> Queue of URLs
+	QueueMutex           sync.Mutex
+	QueueTimestamps      = make(map[string][]string) // Guild ID -> Queue of timestamps
+	QueueTimestampsMutex sync.Mutex
+	Playing              = make(map[string]bool)
+	PlayingMutex         sync.Mutex
+	Paused               = make(map[string]bool) // Guild ID -> Pause state
+	PauseMutex           sync.Mutex
+	Volume               = make(map[string]float64) // Guild ID -> Volume
+	VolumeMutex          sync.Mutex
 
 	// Replace single global encoder with per-guild encoders to avoid races
 	OpusEncoders     = make(map[string]*gopus.Encoder) // GuildID -> *gopus.Encoder

@@ -148,17 +148,43 @@ func (ctx *Context) determineArgumentsFromMessage() {
 	// presume not sanitised
 	switch ctx.CommandName {
 	case "play":
-		// everything after !play is the url
+		// everything after !play and before a space is the URL, everything after that is the timestamp
 		if len(ctx.Message.Content) > 6 {
-			ctx.ArgumentsRaw["url"] = ctx.Message.Content[6:]
+			remaining := strings.TrimSpace(ctx.Message.Content[6:])
+			parts := strings.Fields(remaining)
+			if len(parts) > 0 {
+				ctx.ArgumentsRaw["url"] = parts[0]
+				if len(parts) > 1 {
+					ctx.ArgumentsRaw["timestamp"] = strings.Join(parts[1:], " ")
+				} else {
+					ctx.ArgumentsRaw["timestamp"] = ""
+				}
+			} else {
+				ctx.ArgumentsRaw["url"] = ""
+				ctx.ArgumentsRaw["timestamp"] = ""
+			}
 		} else {
 			ctx.ArgumentsRaw["url"] = ""
+			ctx.ArgumentsRaw["timestamp"] = ""
 		}
 	case "search":
 		if len(ctx.Message.Content) > 8 {
-			ctx.ArgumentsRaw["query"] = ctx.Message.Content[8:]
+			remaining := strings.TrimSpace(ctx.Message.Content[8:])
+			parts := strings.Fields(remaining)
+			if len(parts) > 0 {
+				ctx.ArgumentsRaw["query"] = strings.Join(parts[:len(parts)-1], " ")
+				if len(parts) > 1 {
+					ctx.ArgumentsRaw["timestamp"] = parts[len(parts)-1]
+				} else {
+					ctx.ArgumentsRaw["timestamp"] = ""
+				}
+			} else {
+				ctx.ArgumentsRaw["query"] = ""
+				ctx.ArgumentsRaw["timestamp"] = ""
+			}
 		} else {
 			ctx.ArgumentsRaw["query"] = ""
+			ctx.ArgumentsRaw["timestamp"] = ""
 		}
 	case "volume":
 		if len(ctx.Message.Content) > 8 {
@@ -190,6 +216,15 @@ func (ctx *Context) standardiseArguments() {
 		} else {
 			ctx.Arguments["url"] = ""
 		}
+		if val, exists := ctx.getArgumentRaw("timestamp"); exists {
+			if strVal, ok := val.(string); ok {
+				ctx.Arguments["timestamp"] = strVal
+			} else {
+				ctx.Arguments["timestamp"] = ""
+			}
+		} else {
+			ctx.Arguments["timestamp"] = ""
+		}
 	case "search": // query string
 		if val, exists := ctx.getArgumentRaw("query"); exists {
 			if strVal, ok := val.(string); ok {
@@ -199,6 +234,15 @@ func (ctx *Context) standardiseArguments() {
 			}
 		} else {
 			ctx.Arguments["query"] = ""
+		}
+		if val, exists := ctx.getArgumentRaw("timestamp"); exists {
+			if strVal, ok := val.(string); ok {
+				ctx.Arguments["timestamp"] = strVal
+			} else {
+				ctx.Arguments["timestamp"] = ""
+			}
+		} else {
+			ctx.Arguments["timestamp"] = ""
 		}
 
 	case "volume": // level int (0-200)

@@ -32,9 +32,13 @@ func ProcessQueue(ctx *state.Context) {
 				break
 			}
 
-			// Dequeue the next song
+			// Dequeue the next song and its timestamp
 			currentURL := state.Queue[ctx.GetGuildID()][0]
+			state.QueueTimestampsMutex.Lock()
+			ts := state.QueueTimestamps[ctx.GetGuildID()][0]
 			state.Queue[ctx.GetGuildID()] = state.Queue[ctx.GetGuildID()][1:]
+			state.QueueTimestamps[ctx.GetGuildID()] = state.QueueTimestamps[ctx.GetGuildID()][1:]
+			state.QueueTimestampsMutex.Unlock()
 			songLength := len(state.Queue[ctx.GetGuildID()])
 			state.QueueMutex.Unlock()
 
@@ -59,7 +63,7 @@ func ProcessQueue(ctx *state.Context) {
 			state.PauseMutex.Unlock()
 
 			done := make(chan bool)
-			go playAudio(ctx, currentURL, stop, pauseCh, done)
+			go playAudio(ctx, currentURL, ts, stop, pauseCh, done)
 			<-done
 
 			logging.InfoLog("Song finished, moving to next in queue if available.")

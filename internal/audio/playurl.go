@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"os/exec"
 	"strconv"
@@ -19,7 +20,7 @@ import (
 
 // Discord voice server/channel.  voice websocket and udp socket
 // must already be setup before this will work.
-func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh <-chan bool) {
+func PlayURL(v *discordgo.VoiceConnection, url string, ts string, stop <-chan bool, pauseCh <-chan bool) {
 
 	if !validation.IsValidURL(url) {
 		OnError("Invalid URL"+url, nil)
@@ -27,7 +28,13 @@ func PlayURL(v *discordgo.VoiceConnection, url string, stop <-chan bool, pauseCh
 	}
 
 	// Create the yt-dlp command to download only the audio with best quality
+	fmt.Println("attempted ts: " + ts)
+	if !validation.IsValidTimestamp(ts) || ts == "" {
+		ts = "*0-inf"
+	}
+	fmt.Println("ts: " + ts)
 	ytDlpCmd := exec.Command("yt-dlp",
+		"--download-sections", ts,
 		"-f", "bestaudio",
 		"--no-playlist",
 		"-o", "-",
