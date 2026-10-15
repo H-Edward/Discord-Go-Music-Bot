@@ -1,6 +1,7 @@
 package state
 
 import (
+	"discord-go-music-bot/internal/validation"
 	"strconv"
 	"strings"
 
@@ -175,6 +176,11 @@ func (ctx *Context) determineArgumentsFromMessage() {
 				ctx.ArgumentsRaw["query"] = strings.Join(parts[:len(parts)-1], " ")
 				if len(parts) > 1 {
 					ctx.ArgumentsRaw["timestamp"] = parts[len(parts)-1]
+					// If the last part is not a valid timestamp, treat it as part of the query
+					if !validation.IsValidTimestamp(ctx.ArgumentsRaw["timestamp"].(string)) {
+						ctx.ArgumentsRaw["query"] = remaining
+						ctx.ArgumentsRaw["timestamp"] = ""
+					}
 				} else {
 					ctx.ArgumentsRaw["timestamp"] = ""
 				}
