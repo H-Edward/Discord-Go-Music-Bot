@@ -27,12 +27,11 @@ func PlayURL(v *discordgo.VoiceConnection, url string, ts string, stop <-chan bo
 		return
 	}
 
-	// Create the yt-dlp command to download only the audio with best quality
-	fmt.Println("attempted ts: " + ts)
 	if !validation.IsValidTimestamp(ts) || ts == "" {
 		ts = "*0-inf"
 	}
-	fmt.Println("ts: " + ts)
+	// Create the yt-dlp command to download only the audio with best quality
+
 	ytDlpCmd := exec.Command("yt-dlp",
 		"--download-sections", ts,
 		"-f", "bestaudio",
