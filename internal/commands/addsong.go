@@ -12,6 +12,7 @@ import (
 
 func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, true for search)
 	var url string
+	var ts string
 
 	if !discordutil.IsUserInVoiceChannel(ctx) {
 		ctx.Reply(constants.EmojiWarning + " You must be in a voice channel to use this command.")
@@ -66,9 +67,27 @@ func AddSong(ctx *state.Context, search_mode bool) { // mode (false for play, tr
 		}
 
 	}
+
+	// get the ts if provided, if invalid, ignore it and play from start
+	if len(ctx.Arguments["timestamp"]) > 0 {
+		ts = strings.TrimSpace(ctx.Arguments["timestamp"])
+
+		var valid bool
+		ts, valid = validation.SanitiseTimestamp(ts)
+
+		if !valid {
+			ctx.Reply(constants.EmojiWarning + " Invalid timestamp, playing from start")
+			ts = ""
+		}
+	}
+	
 	state.QueueMutex.Lock()
 	state.Queue[ctx.GetGuildID()] = append(state.Queue[ctx.GetGuildID()], url)
 	state.QueueMutex.Unlock()
+
+	state.QueueTimestampsMutex.Lock()
+	state.QueueTimestamps[ctx.GetGuildID()] = append(state.QueueTimestamps[ctx.GetGuildID()], ts)
+	state.QueueTimestampsMutex.Unlock()
 
 	state.PlayingMutex.Lock()
 	isAlreadyPlaying := state.Playing[ctx.GetGuildID()]

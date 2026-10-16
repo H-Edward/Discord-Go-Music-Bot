@@ -14,8 +14,8 @@ func Help(ctx *state.Context) {
 	helpMessage := constants.EmojiInfo + " Commands:\n" +
 		prefix + "ping - Responds with Pong\n" +
 		prefix + "pong - Responds with Ping\n" +
-		prefix + "play <url> - Plays a song from the given URL\n" +
-		prefix + "search <query> - Searches for a song and plays it\n" +
+		prefix + "play <url> <ts> - Plays a song from the given URL at an optional timestamp (format: 00:00:00 or 2m10s)\n" +
+		prefix + "search <query> <ts> - Searches for a song and plays it from an optional timestamp (format: 00:00:00 or 2m10s)\n" +
 		prefix + "skip - Skips the current song\n" +
 		prefix + "queue - Shows the current queue\n" +
 		prefix + "stop - Stops playback and clears the queue\n" +

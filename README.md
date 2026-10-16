@@ -237,8 +237,14 @@ Here are some other command examples for your reference:
 Add a video to the queue by URL
 /play https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
+Play a video from a URL at a specific timestamp
+/play https://www.youtube.com/watch?v=dQw4w9WgXcQ 1m10s
+
 Search for a video and add it to the queue
 /search Rick Astley Never Gonna Give You Up
+
+Search for a video and add it to the queue at a specific timestamp
+/search Rick Astley Never Gonna Give You Up 1m10s
 
 /pause
 

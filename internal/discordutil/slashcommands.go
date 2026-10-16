@@ -23,6 +23,12 @@ func SetupSlashCommands(s *discordgo.Session) {
 					Description: "The Youtube URL to play",
 					Required:    true,
 				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "timestamp",
+					Description: "The point to start from",
+					Required:    false,
+				},
 			},
 		},
 		{Name: "search", Description: constants.EmojiSearch + " Search for a song to play",
@@ -32,6 +38,12 @@ func SetupSlashCommands(s *discordgo.Session) {
 					Name:        "query",
 					Description: "The search query",
 					Required:    true,
+				},
+				{
+					Type:        discordgo.ApplicationCommandOptionString,
+					Name:        "timestamp",
+					Description: "The point to start from",
+					Required:    false,
 				},
 			},
 		},
@@ -86,6 +98,7 @@ func SetupSlashCommands(s *discordgo.Session) {
 				found = true
 				break
 			}
+
 		}
 		if !found {
 			_, err := s.ApplicationCommandCreate(s.State.User.ID, "", cmd)
